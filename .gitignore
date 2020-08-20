@@ -1,0 +1,9 @@
+/.vs
+/BusinessLogic/obj
+/BusinessLogic/bin
+/BusinessLogicTests/obj
+/BusinessLogicTests/bin
+/packages
+/recycler.txt
+/Recycler/obj
+/Recycler/bin
