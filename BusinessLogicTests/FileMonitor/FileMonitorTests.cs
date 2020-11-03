@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BusinessLogic.FileMonitor;
-using System.Linq;
+﻿using System.Linq;
+using BusinessLogic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessLogicTests
 {

@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
 
-[assembly: InternalsVisibleTo("BusinessLogicTests")]
-
-namespace BusinessLogic.FileMonitor
+namespace BusinessLogic
 {
     public class FileMonitor : IFileMonitor
     {
+        private string m_knownFolder;
+
         public void AddFolderForMonitoring(string path)
         {
-            throw new NotImplementedException();
+            m_knownFolder = path;
         }
 
         internal IEnumerable<string> GetMonitoredFolderPath()
         {
-            throw new NotImplementedException();
+            return new List<string> { m_knownFolder };
         }
     }
 }

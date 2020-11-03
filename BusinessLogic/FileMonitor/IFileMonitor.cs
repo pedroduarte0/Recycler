@@ -1,4 +1,8 @@
-﻿namespace BusinessLogic.FileMonitor
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("BusinessLogicTests")]
+
+namespace BusinessLogic
 {
     public interface IFileMonitor
     {
