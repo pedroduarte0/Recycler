@@ -39,8 +39,8 @@ namespace BusinessLogicTests
             // Assert
             var knownFolders = fileMonitor.GetMonitoredFolderPath();
             Assert.AreEqual(2, knownFolders.Count(), $"Number of folder paths is incorrect.");
-            Assert.AreEqual(path1, knownFolders.Take(1));
-            Assert.AreEqual(path2, knownFolders.Take(1));
+            Assert.AreEqual(path1, knownFolders[0]);
+            Assert.AreEqual(path2, knownFolders[1]);
         }
     }
 }

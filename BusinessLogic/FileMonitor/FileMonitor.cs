@@ -4,16 +4,21 @@ namespace BusinessLogic
 {
     public class FileMonitor : IFileMonitor
     {
-        private string m_knownFolder;
+        private List<string> m_monitoredFolders;
+
+        public FileMonitor()
+        {
+            m_monitoredFolders = new List<string>();
+        }
 
         public void AddFolderForMonitoring(string path)
         {
-            m_knownFolder = path;
+            m_monitoredFolders.Add(path);
         }
 
-        internal IEnumerable<string> GetMonitoredFolderPath()
+        internal IList<string> GetMonitoredFolderPath()
         {
-            return new List<string> { m_knownFolder };
+            return m_monitoredFolders;
         }
     }
 }
