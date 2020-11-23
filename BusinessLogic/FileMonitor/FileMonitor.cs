@@ -31,7 +31,7 @@ namespace BusinessLogic.FileMonitor
 
         public void PersistFolders()
         {
-
+            m_persister.Persist(m_monitoredFolders);
         }
     }
 }
