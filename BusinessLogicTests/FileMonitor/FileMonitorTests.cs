@@ -13,7 +13,7 @@ namespace BusinessLogicTests
             // Arrange
             string path = "path to folder";
 
-            var fileMonitor = new FileMonitor();
+            var fileMonitor = GetFileMonitor();
 
             // Act
             fileMonitor.AddFolderForMonitoring(path);
@@ -30,7 +30,7 @@ namespace BusinessLogicTests
             string path1 = "path1";
             string path2 = "path2";
 
-            var fileMonitor = new FileMonitor();
+            var fileMonitor = GetFileMonitor();
 
             // Act
             fileMonitor.AddFolderForMonitoring(path1);
@@ -41,6 +41,11 @@ namespace BusinessLogicTests
             Assert.AreEqual(2, knownFolders.Count(), $"Number of folder paths is incorrect.");
             Assert.AreEqual(path1, knownFolders[0]);
             Assert.AreEqual(path2, knownFolders[1]);
+        }
+
+        private FileMonitor GetFileMonitor()
+        {
+            return new FileMonitor();
         }
     }
 }
