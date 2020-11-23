@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using BusinessLogic;
+using BusinessLogic.FileMonitor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace BusinessLogicTests
 {
@@ -14,7 +15,7 @@ namespace BusinessLogicTests
             // Arrange
             string path = "path to folder";
 
-            var fileMonitor = GetFileMonitor();
+            var fileMonitor = new FileMonitorBuilder().Build();
 
             // Act
             fileMonitor.AddFolderForMonitoring(path);
@@ -31,7 +32,7 @@ namespace BusinessLogicTests
             string path1 = "path1";
             string path2 = "path2";
 
-            var fileMonitor = GetFileMonitor();
+            var fileMonitor = new FileMonitorBuilder().Build();
 
             // Act
             fileMonitor.AddFolderForMonitoring(path1);
@@ -50,7 +51,7 @@ namespace BusinessLogicTests
             // Arrange
             string path = "path";
 
-            var fileMonitor = GetFileMonitor();
+            var fileMonitor = new FileMonitorBuilder().Build();
             fileMonitor.AddFolderForMonitoring(path);
 
             // Act
@@ -68,7 +69,7 @@ namespace BusinessLogicTests
             string pathToKeep = "pathToKeep";
             string pathToRemove = "pathToRemove";
 
-            var fileMonitor = GetFileMonitor();
+            var fileMonitor = new FileMonitorBuilder().Build();
             fileMonitor.AddFolderForMonitoring(pathToKeep);
             fileMonitor.AddFolderForMonitoring(pathToRemove);
 
@@ -80,9 +81,48 @@ namespace BusinessLogicTests
             Assert.IsTrue(knownFolders.Contains(pathToKeep), $"Expected path '{pathToKeep}' to be found.");
         }
 
-        private FileMonitor GetFileMonitor()
+        [TestMethod]
+        public void PersistFolders_KnownFolder_FoldersArePersisted()
         {
-            return new FileMonitor();
+            // Arrange
+            string path1 = "path1";
+            string path2 = "path2";
+
+            var stringListPersisterMock = new Mock<IStringListPersister>();
+
+            var fileMonitor = new FileMonitorBuilder()
+                .With(stringListPersisterMock)
+                .Build();
+
+            fileMonitor.AddFolderForMonitoring(path1);
+            fileMonitor.AddFolderForMonitoring(path2);
+
+            // Act
+            fileMonitor.PersistFolders();
+
+            // Assert
+            stringListPersisterMock.Verify(x => x.Persist(It.IsAny<IList<string>>()));
+        }
+    }
+
+    internal class FileMonitorBuilder
+    {
+        private Mock<IStringListPersister> m_stringListPersisterMock;
+
+        public FileMonitorBuilder()
+        {
+            m_stringListPersisterMock = new Mock<IStringListPersister>();
+        }
+
+        public FileMonitorBuilder With(Mock<IStringListPersister> stringListPersisterMock)
+        {
+            m_stringListPersisterMock = stringListPersisterMock;
+            return this;
+        }
+
+        public FileMonitor Build()
+        {
+            return new FileMonitor(m_stringListPersisterMock.Object);
         }
     }
 }
