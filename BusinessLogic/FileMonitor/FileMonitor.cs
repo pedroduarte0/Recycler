@@ -16,6 +16,10 @@ namespace BusinessLogic
             m_monitoredFolders.Add(path);
         }
 
+        public void RemoveFolderForMonitoring(string path)
+        {
+        }
+
         internal IList<string> GetMonitoredFolderPath()
         {
             return m_monitoredFolders;
