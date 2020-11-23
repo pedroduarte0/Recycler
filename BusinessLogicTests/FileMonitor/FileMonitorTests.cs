@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using BusinessLogic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -19,7 +20,7 @@ namespace BusinessLogicTests
             fileMonitor.AddFolderForMonitoring(path);
 
             // Assert
-            var knownFolders = fileMonitor.GetMonitoredFolderPath();
+            IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
             Assert.AreEqual(path, knownFolders.First());
         }
 
@@ -37,7 +38,7 @@ namespace BusinessLogicTests
             fileMonitor.AddFolderForMonitoring(path2);
 
             // Assert
-            var knownFolders = fileMonitor.GetMonitoredFolderPath();
+            IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
             Assert.AreEqual(2, knownFolders.Count(), $"Number of folder paths is incorrect.");
             Assert.AreEqual(path1, knownFolders[0]);
             Assert.AreEqual(path2, knownFolders[1]);
@@ -56,7 +57,7 @@ namespace BusinessLogicTests
             fileMonitor.RemoveFolderForMonitoring(path);
 
             // Assert
-            var knownFolders = fileMonitor.GetMonitoredFolderPath();
+            IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
             Assert.IsFalse(knownFolders.Contains(path), $"Expected path '{path}' to be removed but it was not.");
         }
 
@@ -75,7 +76,7 @@ namespace BusinessLogicTests
             fileMonitor.RemoveFolderForMonitoring(pathToRemove);
 
             // Assert
-            var knownFolders = fileMonitor.GetMonitoredFolderPath();
+            IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
             Assert.IsTrue(knownFolders.Contains(pathToKeep), $"Expected path '{pathToKeep}' to be found.");
         }
 
