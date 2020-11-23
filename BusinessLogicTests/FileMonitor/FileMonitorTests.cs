@@ -60,6 +60,25 @@ namespace BusinessLogicTests
             Assert.IsFalse(knownFolders.Contains(path), $"Expected path '{path}' to be removed but it was not.");
         }
 
+        [TestMethod]
+        public void RemoveFolderForMonitoring_TwoFolderPathsRemoveOne_LeaveTheOther()
+        {
+            // Arrange
+            string pathToKeep = "pathToKeep";
+            string pathToRemove = "pathToRemove";
+
+            var fileMonitor = GetFileMonitor();
+            fileMonitor.AddFolderForMonitoring(pathToKeep);
+            fileMonitor.AddFolderForMonitoring(pathToRemove);
+
+            // Act
+            fileMonitor.RemoveFolderForMonitoring(pathToRemove);
+
+            // Assert
+            var knownFolders = fileMonitor.GetMonitoredFolderPath();
+            Assert.IsTrue(knownFolders.Contains(pathToKeep), $"Expected path '{pathToKeep}' to be found.");
+        }
+
         private FileMonitor GetFileMonitor()
         {
             return new FileMonitor();
