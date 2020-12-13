@@ -7,20 +7,18 @@ using System.Reflection;
 namespace BusinessLogicTests
 {
     [TestClass]
-    public class FileWatcherWrapperFactoryTests
+    public class FileWatcherWrapperTests
     {
         [TestMethod]
-        public void Create_WhenCalled_CreatesFileWatcherWrapper()
+        public void Constructor_WhenCalled_CreatesFileSystemWatcher()
         {
-            // Arrange
-            var sut = new FileWatcherWrapperFactory();
+            // Arrange + act
             string someRealPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            // Act
-            var instance = sut.Create(someRealPath);
+            var sut = new FileWatcherWrapper(someRealPath);
 
             // Assert
-            instance.Should().NotBeNull();
+            sut.IsFileSystemWatcherNull().Should().BeFalse();
         }
     }
 }
