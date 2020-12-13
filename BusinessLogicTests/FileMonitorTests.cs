@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using BusinessLogic;
 using BusinessLogic.FileMonitor;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
