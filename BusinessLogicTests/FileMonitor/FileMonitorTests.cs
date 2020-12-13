@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BusinessLogic;
 using BusinessLogic.FileMonitor;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -22,7 +24,7 @@ namespace BusinessLogicTests
 
             // Assert
             IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
-            Assert.AreEqual(path, knownFolders.First());
+            path.Should().Be(knownFolders.First());
         }
 
         [TestMethod]
@@ -40,9 +42,9 @@ namespace BusinessLogicTests
 
             // Assert
             IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
-            Assert.AreEqual(2, knownFolders.Count(), $"Number of folder paths is incorrect.");
-            Assert.AreEqual(path1, knownFolders[0]);
-            Assert.AreEqual(path2, knownFolders[1]);
+            knownFolders.Should().HaveCount(2);
+            path1.Should().Be(knownFolders[0]);
+            path2.Should().Be(knownFolders[1]);
         }
 
         [TestMethod]
@@ -59,7 +61,7 @@ namespace BusinessLogicTests
 
             // Assert
             IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
-            Assert.IsFalse(knownFolders.Contains(path), $"Expected path '{path}' to be removed but it was not.");
+            knownFolders.Should().NotContain(path);
         }
 
         [TestMethod]
@@ -102,7 +104,6 @@ namespace BusinessLogicTests
 
             // Assert
             stringListPersisterMock.Verify(x => x.Persist(It.IsAny<IList<string>>()));
-
         }
 
         [TestMethod]
@@ -173,7 +174,10 @@ namespace BusinessLogicTests
             fileMonitor.StartMonitoring();
 
             // Assert
-            Assert.IsTrue(fileMonitor.m_fileWatcherWrappers.ContainsKey("path"));
+            var wrappers = fileMonitor.m_fileWatcherWrappers;
+
+            wrappers.Should().HaveCount(1);
+            wrappers.Should().ContainKey("path");
         }
     }
 
