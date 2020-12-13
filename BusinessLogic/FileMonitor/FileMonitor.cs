@@ -7,10 +7,12 @@ namespace BusinessLogic.FileMonitor
         private List<string> m_monitoredFolders;
         private readonly IStringListPersister m_persister;
         private readonly IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
+        internal readonly Dictionary<string, IFileWatcherWrapper> m_fileWatcherWrappers;
 
         public FileMonitor(IStringListPersister persister, IFileWatcherWrapperFactory factory)
         {
             m_monitoredFolders = new List<string>();
+            m_fileWatcherWrappers = new Dictionary<string, IFileWatcherWrapper>();
             m_persister = persister;
             m_fileWatcherWrapperFactory = factory;
         }
@@ -39,7 +41,8 @@ namespace BusinessLogic.FileMonitor
         {
             foreach (var folder in m_monitoredFolders)
             {
-                m_fileWatcherWrapperFactory.Create(folder);
+                var instance = m_fileWatcherWrapperFactory.Create(folder);
+                m_fileWatcherWrappers[folder] = instance;   // TODO: Dispose instances
             }
         }
     }

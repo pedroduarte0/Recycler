@@ -132,6 +132,49 @@ namespace BusinessLogicTests
             Mock.Get(factory)
                 .Verify(x => x.Create("path to folder"), Times.Once);
         }
+
+        [TestMethod]
+        public void StartMonitoring_TwoMonitoredFolders_CreatesTwoFileWatcher()
+        {
+            // Arrange
+            var factory = Mock.Of<IFileWatcherWrapperFactory>();
+
+            var fileMonitor = new FileMonitorBuilder()
+                .WithFileWatcherWrapperFactory(factory)
+                .Build();
+
+            fileMonitor.AddFolderForMonitoring("path1");
+            fileMonitor.AddFolderForMonitoring("path2");
+
+            // Act
+            fileMonitor.StartMonitoring();
+
+            // Assert
+            Mock.Get(factory)
+                .Verify(x => x.Create("path1"), Times.Once);
+
+            Mock.Get(factory)
+                .Verify(x => x.Create("path2"), Times.Once);
+        }
+
+        [TestMethod]
+        public void StartMonitoring_OneFileWatcherCreated_InstanceKeptInMemory()
+        {
+            // Arrange
+            var factory = Mock.Of<IFileWatcherWrapperFactory>();
+
+            var fileMonitor = new FileMonitorBuilder()
+                .WithFileWatcherWrapperFactory(factory)
+                .Build();
+
+            fileMonitor.AddFolderForMonitoring("path");
+
+            // Act
+            fileMonitor.StartMonitoring();
+
+            // Assert
+            Assert.IsTrue(fileMonitor.m_fileWatcherWrappers.ContainsKey("path"));
+        }
     }
 
     internal class FileMonitorBuilder
