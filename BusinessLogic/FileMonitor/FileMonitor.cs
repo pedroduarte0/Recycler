@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BusinessLogic.FileMonitor
 {
@@ -7,11 +6,13 @@ namespace BusinessLogic.FileMonitor
     {
         private List<string> m_monitoredFolders;
         private readonly IStringListPersister m_persister;
+        private readonly IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
 
-        public FileMonitor(IStringListPersister persister)
+        public FileMonitor(IStringListPersister persister, IFileWatcherWrapperFactory factory)
         {
             m_monitoredFolders = new List<string>();
             m_persister = persister;
+            m_fileWatcherWrapperFactory = factory;
         }
 
         public void AddFolderForMonitoring(string path)
@@ -32,6 +33,14 @@ namespace BusinessLogic.FileMonitor
         public void PersistFolders()
         {
             m_persister.Persist(m_monitoredFolders);
+        }
+
+        public void StartMonitoring()
+        {
+            foreach (var folder in m_monitoredFolders)
+            {
+                m_fileWatcherWrapperFactory.Create(folder);
+            }
         }
     }
 }

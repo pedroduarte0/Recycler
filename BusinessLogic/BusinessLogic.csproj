@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="FileMonitor\FileMonitor.cs" />
     <Compile Include="FileMonitor\IFileMonitor.cs" />
+    <Compile Include="FileMonitor\IFileWatcherWrapper.cs" />
+    <Compile Include="FileMonitor\IFileWatcherWrapperFactory.cs" />
     <Compile Include="FileMonitor\IStringListPersister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

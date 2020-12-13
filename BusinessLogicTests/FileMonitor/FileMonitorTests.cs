@@ -102,27 +102,63 @@ namespace BusinessLogicTests
 
             // Assert
             stringListPersisterMock.Verify(x => x.Persist(It.IsAny<IList<string>>()));
+
+        }
+
+        [TestMethod]
+        public void NewFile_FileDescriptorCreated()
+        {
+            // todo: FileMonitor seems a FileSystemWatcherWrapperBuilder: we need one FileSystemWatcher per known folder
+            // (btw, know folders are recursive, so known folder A cannot be inside of a known folder B) therefore we need a builder)
+            // the FileSystemWatcherWrapper wraps to the .NET FileSystemWatcher as in https://stackoverflow.com/questions/33254493/unit-testing-filesystemwatcher-how-to-programatically-fire-a-changed-event
+        }
+
+        [TestMethod]
+        public void StartMonitoring_OneMonitoredFolder_CreatesOneFileWatcher()
+        {
+            // Arrange
+            var factory = Mock.Of<IFileWatcherWrapperFactory>();
+
+            var fileMonitor = new FileMonitorBuilder()
+                .WithFileWatcherWrapperFactory(factory)
+                .Build();
+
+            fileMonitor.AddFolderForMonitoring("path to folder");
+
+            // Act
+            fileMonitor.StartMonitoring();
+
+            // Assert
+            Mock.Get(factory)
+                .Verify(x => x.Create("path to folder"), Times.Once);
         }
     }
 
     internal class FileMonitorBuilder
     {
         private Mock<IStringListPersister> m_stringListPersisterMock;
+        private IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
 
         public FileMonitorBuilder()
         {
             m_stringListPersisterMock = new Mock<IStringListPersister>();
         }
 
-        public FileMonitorBuilder With(Mock<IStringListPersister> stringListPersisterMock)
+        public FileMonitorBuilder With(Mock<IStringListPersister> mock)
         {
-            m_stringListPersisterMock = stringListPersisterMock;
+            m_stringListPersisterMock = mock;
+            return this;
+        }
+
+        public FileMonitorBuilder WithFileWatcherWrapperFactory(IFileWatcherWrapperFactory factory)
+        {
+            m_fileWatcherWrapperFactory = factory;
             return this;
         }
 
         public FileMonitor Build()
         {
-            return new FileMonitor(m_stringListPersisterMock.Object);
+            return new FileMonitor(m_stringListPersisterMock.Object, m_fileWatcherWrapperFactory);
         }
     }
 }
