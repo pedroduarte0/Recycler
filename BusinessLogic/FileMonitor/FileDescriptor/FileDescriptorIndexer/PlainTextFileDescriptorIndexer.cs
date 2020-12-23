@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -7,11 +6,15 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
     public class PlainTextFileDescriptorIndexer : IFileDescriptorIndexer
     {
+        private readonly ISerializer2 m_serializer;
+        private readonly IStorage m_storage;
         private Dictionary<string, FileDescriptor> m_descriptors;
 
-        public PlainTextFileDescriptorIndexer()
+        public PlainTextFileDescriptorIndexer(ISerializer2 serializer, IStorage storage)
         {
             m_descriptors = new Dictionary<string, FileDescriptor>();   //TODO: Load from file.
+            m_serializer = serializer;
+            m_storage = storage;
         }
 
         public void Insert(FileDescriptor descriptor)
@@ -21,7 +24,8 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         public void Persist()
         {
-            throw new NotImplementedException();
+            string json = m_serializer.Serialize(m_descriptors);
+            m_storage.Save(json, "FileDescriptorIndex.txt");
         }
 
         public void Remove(FileDescriptor descriptor)

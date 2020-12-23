@@ -1,8 +1,10 @@
-﻿using BusinessLogic.FileMonitor;
+﻿using BusinessLogic;
+using BusinessLogic.FileMonitor;
 using BusinessLogic.FileMonitor.FileDescriptor;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
+using Moq;
 using System.Linq;
 
 namespace BusinessLogicTests
@@ -14,7 +16,7 @@ namespace BusinessLogicTests
         public void Insert_FileDescriptor_Inserted()
         {
             // Arrange
-            var sut = new PlainTextFileDescriptorIndexer();
+            var sut = new IndexerBuilder().Build();
 
             var fd = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
 
@@ -29,7 +31,7 @@ namespace BusinessLogicTests
         public void RetrieveAll_TwoFileDescriptors_Retrieved()
         {
             // Arrange
-            var sut = new PlainTextFileDescriptorIndexer();
+            var sut = new IndexerBuilder().Build();
 
             var fd1 = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
             sut.Insert(fd1);
@@ -49,7 +51,7 @@ namespace BusinessLogicTests
         public void Insert_FileDescriptorExists_IsUpdated()
         {
             // Arrange
-            var sut = new PlainTextFileDescriptorIndexer();
+            var sut = new IndexerBuilder().Build();
 
             var fd = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
             sut.Insert(fd);
@@ -72,7 +74,7 @@ namespace BusinessLogicTests
         public void Remove_FileDescriptor_Removed()
         {
             // Arrange
-            var sut = new PlainTextFileDescriptorIndexer();
+            var sut = new IndexerBuilder().Build();
 
             var fd = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
             sut.Insert(fd);
@@ -82,6 +84,63 @@ namespace BusinessLogicTests
 
             // Assert
             sut.Exists(fd).Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Persist_WhenCalled_SerializesAndSavesDescriptors()
+        {
+            // Arrange
+            const string serializationResult = "json string";
+
+            var serializer = new Mock<ISerializer2>();
+            serializer.Setup(x => x.Serialize(It.IsAny<object>()))
+                .Returns(serializationResult);
+
+            var storage = new Mock<IStorage>();
+
+            var sut = new IndexerBuilder()
+                .With(serializer.Object)
+                .With(storage.Object)
+                .Build();
+
+            var fd = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
+            sut.Insert(fd);
+
+            // Act
+            sut.Persist();
+
+            // Assert
+            serializer.Verify(x => x.Serialize(It.IsAny<object>()), Times.Once);
+            storage.Verify(x => x.Save(serializationResult, It.IsAny<string>()), Times.Once);
+        }
+    }
+
+    internal class IndexerBuilder
+    {
+        private IStorage m_storage;
+        private ISerializer2 m_serializer;
+
+        public IndexerBuilder()
+        {
+            m_storage = Mock.Of<IStorage>();
+            m_serializer = Mock.Of<ISerializer2>();
+        }
+
+        public IndexerBuilder With(ISerializer2 serializer)
+        {
+            m_serializer = serializer;
+            return this;
+        }
+
+        public IndexerBuilder With(IStorage storage)
+        {
+            m_storage = storage;
+            return this;
+        }
+
+        public PlainTextFileDescriptorIndexer Build()
+        {
+            return new PlainTextFileDescriptorIndexer(m_serializer, m_storage);
         }
     }
 }
