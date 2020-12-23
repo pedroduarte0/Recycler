@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace BusinessLogic.FileMonitor
 {
@@ -23,9 +24,24 @@ namespace BusinessLogic.FileMonitor
 
             if (m_fileWatcherWrappers.ContainsKey(path) == false)
             {
-                var instance = m_fileWatcherWrapperFactory.Create(path);
-                m_fileWatcherWrappers[path] = instance;
+                var fileWatcherWrapper = m_fileWatcherWrapperFactory.Create(path);
+                Setup(fileWatcherWrapper);
+                m_fileWatcherWrappers[path] = fileWatcherWrapper;
             }
+        }
+
+        private void Setup(IFileWatcherWrapper fileWatcherWrapper)
+        {
+            fileWatcherWrapper.IncludeSubdirectories = false;
+            fileWatcherWrapper.EnableRaisingEvents = true;
+            fileWatcherWrapper.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+                | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+
+            fileWatcherWrapper.Changed += new FileSystemEventHandler(OnChanged);
+        }
+
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
         }
 
         public void RemoveFolderForMonitoring(string path)
@@ -35,6 +51,7 @@ namespace BusinessLogic.FileMonitor
             if (m_fileWatcherWrappers.ContainsKey(path))
             {
                 var watcher = m_fileWatcherWrappers[path];
+                watcher.Changed -= new FileSystemEventHandler(OnChanged);
                 watcher.Dispose();
                 m_fileWatcherWrappers.Remove(path);
             }

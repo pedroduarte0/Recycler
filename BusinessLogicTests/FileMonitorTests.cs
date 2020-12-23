@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using BusinessLogic;
 using BusinessLogic.FileMonitor;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -52,7 +54,8 @@ namespace BusinessLogicTests
             // Arrange
             const string path = "path to folder";
 
-            var factory = Mock.Of<IFileWatcherWrapperFactory>();
+            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
+               f.Create(path) == Mock.Of<IFileWatcherWrapper>());
 
             var fileMonitor = new FileMonitorBuilder()
                 .WithFileWatcherWrapperFactory(factory)
@@ -72,7 +75,8 @@ namespace BusinessLogicTests
             // Arrange
             const string path = "path to folder";
 
-            var factory = Mock.Of<IFileWatcherWrapperFactory>();
+            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
+            f.Create(path) == Mock.Of<IFileWatcherWrapper>());
 
             var fileMonitor = new FileMonitorBuilder()
                 .WithFileWatcherWrapperFactory(factory)
@@ -85,6 +89,36 @@ namespace BusinessLogicTests
             // Assert
             Mock.Get(factory)
                 .Verify(x => x.Create(path), Times.Once);
+        }
+
+        [TestMethod]
+        public void AddFolderForMonitoring_InitializesFileWatcher()
+        {
+            const string path = "path to folder";
+
+            var fileWatcher = Mock.Of<IFileWatcherWrapper>();
+
+            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
+               f.Create(path) == fileWatcher);
+
+            var fileMonitor = new FileMonitorBuilder()
+                .WithFileWatcherWrapperFactory(factory)
+                .Build();
+
+            // Act
+            fileMonitor.AddFolderForMonitoring(path);
+
+            // Assert   (good practices tell to test only one thing so this could be split in a series of tests)
+            var fileWatcherMock = Mock.Get(fileWatcher);
+            fileWatcherMock
+                .VerifySet(x => x.IncludeSubdirectories = false);
+            fileWatcherMock
+                .VerifySet(x => x.EnableRaisingEvents = true);
+            fileWatcherMock
+                .VerifySet(x => x.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+                | NotifyFilters.FileName | NotifyFilters.DirectoryName);
+
+            //fileWatcherMock.VerifyAdd(m => m.Changed += It.IsAny<FileSystemEventHandler>(), Times.Once);     // Does not work?!
         }
 
         [TestMethod]
@@ -215,14 +249,6 @@ namespace BusinessLogicTests
 
             // Assert
             stringListPersisterMock.Verify(x => x.Persist(It.IsAny<IList<string>>()));
-        }
-
-        [TestMethod]
-        public void NewFile_FileDescriptorCreated()
-        {
-            // todo: FileMonitor seems a FileSystemWatcherWrapperBuilder: we need one FileSystemWatcher per known folder
-            // (btw, know folders are recursive, so known folder A cannot be inside of a known folder B) therefore we need a builder)
-            // the FileSystemWatcherWrapper wraps to the .NET FileSystemWatcher as in https://stackoverflow.com/questions/33254493/unit-testing-filesystemwatcher-how-to-programatically-fire-a-changed-event
         }
     }
 
