@@ -114,8 +114,7 @@ namespace BusinessLogicTests
             fileWatcherMock
                 .VerifySet(x => x.EnableRaisingEvents = true);
             fileWatcherMock
-                .VerifySet(x => x.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-                | NotifyFilters.FileName | NotifyFilters.DirectoryName);
+                .VerifySet(x => x.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName);
 
             //fileWatcherMock.VerifyAdd(m => m.Changed += It.IsAny<FileSystemEventHandler>(), Times.Once);     // Does not work?!
         }
