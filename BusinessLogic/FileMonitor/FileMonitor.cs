@@ -37,7 +37,7 @@ namespace BusinessLogic.FileMonitor
             if (m_fileWatcherWrappers.ContainsKey(path))
             {
                 var watcher = m_fileWatcherWrappers[path];
-                watcher.Changed -= new FileSystemEventHandler(OnChanged);
+                watcher.Changed -= new FileSystemEventHandler(OnFileWatcherChanged);
                 watcher.Dispose();
                 m_fileWatcherWrappers.Remove(path);
             }
@@ -55,11 +55,38 @@ namespace BusinessLogic.FileMonitor
             fileWatcherWrapper.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
                 | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 
-            fileWatcherWrapper.Changed += new FileSystemEventHandler(OnChanged);
+            fileWatcherWrapper.Changed += new FileSystemEventHandler(OnFileWatcherChanged);
         }
 
-        private void OnChanged(object sender, FileSystemEventArgs e)
+        private void OnFileWatcherChanged(object sender, FileSystemEventArgs e)
         {
+            var changeInfoType = ChangeInfoType.Created;
+
+            switch (e.ChangeType)
+            {
+                case WatcherChangeTypes.Created:
+                    changeInfoType = ChangeInfoType.Created;
+                    break;
+                case WatcherChangeTypes.Deleted:
+                    changeInfoType = ChangeInfoType.Deleted;
+                    break;
+                case WatcherChangeTypes.Changed:
+                    // TODO: should reset age?
+                    break;
+                case WatcherChangeTypes.Renamed:
+                    // TODO: What to do?
+                    break;
+                case WatcherChangeTypes.All:
+                    // TODO: What to do?
+                    break;
+                default:
+                    break;
+            }
+
+            var changeInfo = new ChangeInfo(changeInfoType, e.FullPath, e.Name);
+
+            // TODO: Temporary, provide proper implementation (put into a thread safe queue for example)
+            LastCreatedChangeInfo = changeInfo;
         }
 
         internal IList<string> GetMonitoredFolderPath()
@@ -67,5 +94,28 @@ namespace BusinessLogic.FileMonitor
             // TODO: return a copy.
             return m_monitoredFolders;
         }
+
+        //TODO: Temporary
+        internal ChangeInfo LastCreatedChangeInfo { get; set; }
+    }
+
+    public class ChangeInfo
+    {
+        public ChangeInfoType ChangeInfoType { get; private set; }
+        public string FullPath { get; private set; }
+        public string Name { get; private set; }
+
+        public ChangeInfo(ChangeInfoType changeInfoType, string fullPath, string name)
+        {
+            ChangeInfoType = changeInfoType;
+            FullPath = fullPath;
+            Name = name;
+        }
+    }
+
+    public enum ChangeInfoType
+    {
+        Created,
+        Deleted
     }
 }
