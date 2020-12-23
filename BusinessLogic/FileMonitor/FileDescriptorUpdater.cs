@@ -34,14 +34,9 @@ namespace BusinessLogic.FileMonitor
 
         internal void QueueHandler()
         {
-            //bool run = true;
-            //while (run)
-            //{
-            ChangeInfo item;
-
             while (QueueHasItems())
             {
-                if (m_queue.TryDequeue(out item) /*&& run*/)
+                if (m_queue.TryDequeue(out ChangeInfo item))
                 {
                     //TODO if change is new, create FileDescriptor and m_fileDescriptorIndexer.Add(descriptor)
                     //     if change is deleted, m_fileDescriptorIndexer.Remove(descriptor)
@@ -50,9 +45,7 @@ namespace BusinessLogic.FileMonitor
                 }
             }
 
-            //run = false;    // Perhaps not needed.
             m_threadWrapper.ThreadSleep(MonitorPeriod);
-            //}
         }
 
         internal bool QueueHasItems()
