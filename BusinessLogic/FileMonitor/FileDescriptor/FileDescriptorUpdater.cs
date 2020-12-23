@@ -24,6 +24,8 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
             m_threadWrapper = threadWrapper;
             m_fileDescriptorIndexer = fileDescriptorIndexer;
 
+            // TODO: Move following calls to a FileDescriptorUpdater.Initialize()
+            m_fileDescriptorIndexer.Initialize();
             // See also ThreadStart(https://www.geeksforgeeks.org/how-to-create-threads-in-c-sharp/
             m_threadWrapper.TaskFactoryStartNew(QueueHandler);    //TODO: Abstract to wrapper in order to be testable.
         }

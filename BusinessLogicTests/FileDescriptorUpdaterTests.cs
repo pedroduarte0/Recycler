@@ -1,14 +1,27 @@
 ﻿using BusinessLogic.FileMonitor;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using BusinessLogic.FileMonitor.FileDescriptor;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace BusinessLogicTests
 {
     [TestClass]
     public class FileDescriptorUpdaterTests
     {
+        [TestMethod]
+        public void Constructor_InitializesIndexer()
+        {
+            // Arrange
+            var fileDescriptorIndexer = new Mock<IFileDescriptorIndexer>();
+
+            // Act
+            var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), fileDescriptorIndexer.Object);
+
+            // Assert
+            fileDescriptorIndexer.Verify(x => x.Initialize(), Times.Once());
+        }
+
         [TestMethod]
         public void Constructor_CreatesQueueHandler()
         {
