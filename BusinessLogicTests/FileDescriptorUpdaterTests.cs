@@ -14,7 +14,7 @@ namespace BusinessLogicTests
             var threadWrapper = new Mock<IThreadWrapper>();
 
             // Act
-            var sut = new FileDescriptorUpdater(threadWrapper.Object);
+            var sut = new FileDescriptorUpdater(threadWrapper.Object, Mock.Of<IFileDescriptorIndexer>());
 
             // Assert
             threadWrapper.Verify(x =>
@@ -25,8 +25,7 @@ namespace BusinessLogicTests
         public void Enqueue_Item_ItemQueued()
         {
             // Arrange
-            var threadWrapper = new Mock<IThreadWrapper>();
-            var sut = new FileDescriptorUpdater(threadWrapper.Object);
+            var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), Mock.Of<IFileDescriptorIndexer>());
 
             var item = new ChangeInfo(ChangeInfoType.Created, "filepath", "name");
 
@@ -35,6 +34,23 @@ namespace BusinessLogicTests
 
             // Assert
             Assert.IsTrue(sut.QueueHasItems());
+        }
+
+        [TestMethod]
+        public void QueueHandler_ChangeInfoTypeCreated_CreatesFileDescriptor()
+        {
+            // Arrange
+            var fileDescriptorIndexer = Mock.Of<IFileDescriptorIndexer>();
+            var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), fileDescriptorIndexer);
+
+            var newFileChangeInfo = new ChangeInfo(ChangeInfoType.Created, "filepath", "name");
+            sut.Enqueue(newFileChangeInfo);
+
+            // Act
+            sut.QueueHandler();
+
+            // Assert
+            Mock.Get(fileDescriptorIndexer).Verify(x => x.Add(It.IsAny<FileDescriptor>()), Times.Once);
         }
     }
 }
