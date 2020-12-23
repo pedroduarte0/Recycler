@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace BusinessLogic.FileMonitor
 {
@@ -26,6 +27,11 @@ namespace BusinessLogic.FileMonitor
         public void Remove(FileDescriptor descriptor)
         {
             throw new NotImplementedException();
+        }
+
+        public ICollection<FileDescriptor> RetrieveAll()
+        {
+            return m_descriptors.Values.ToList();
         }
 
         internal bool Exists(FileDescriptor descriptor)

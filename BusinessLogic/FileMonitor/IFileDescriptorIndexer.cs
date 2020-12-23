@@ -5,8 +5,9 @@ namespace BusinessLogic.FileMonitor
     public interface IFileDescriptorIndexer
     {
         void Insert(FileDescriptor descriptor);
-
         //FileDescriptor Retrieve(string) // ... hmm how to retrieve Age?
+
+        ICollection<FileDescriptor> RetrieveAll();
 
         void Remove(FileDescriptor descriptor);
 
