@@ -54,6 +54,7 @@
     <Compile Include="FileMonitor\IFileWatcherWrapperFactory.cs" />
     <Compile Include="FileMonitor\IStringListPersister.cs" />
     <Compile Include="FileMonitor\IThreadWrapper.cs" />
+    <Compile Include="FileMonitor\PlainTextFileDescriptorIndexer.cs" />
     <Compile Include="FileMonitor\ThreadWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

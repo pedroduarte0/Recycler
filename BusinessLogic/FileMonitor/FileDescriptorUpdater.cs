@@ -58,6 +58,7 @@ namespace BusinessLogic.FileMonitor
                 }
             }
 
+            m_fileDescriptorIndexer.Persist();
             m_threadWrapper.ThreadSleep(MonitorPeriod);
         }
 
