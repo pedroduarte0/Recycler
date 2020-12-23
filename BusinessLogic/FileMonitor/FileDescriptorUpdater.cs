@@ -50,7 +50,7 @@ namespace BusinessLogic.FileMonitor
             }
         }
 
-        private static bool QueueHasItems()
+        internal bool QueueHasItems()
         {
             return m_queue.IsEmpty == false;
         }
