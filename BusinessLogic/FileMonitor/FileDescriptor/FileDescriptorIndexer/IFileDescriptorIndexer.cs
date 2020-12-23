@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BusinessLogic.FileMonitor
+namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
     public interface IFileDescriptorIndexer
     {

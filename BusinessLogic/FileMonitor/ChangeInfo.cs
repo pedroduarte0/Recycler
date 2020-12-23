@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.FileMonitor
 {
-    // TODO: Replace by FileDescriptor
+    // TODO: Replace by FileDescriptor ?
     public class ChangeInfo
     {
         public ChangeInfoType ChangeInfoType { get; private set; }

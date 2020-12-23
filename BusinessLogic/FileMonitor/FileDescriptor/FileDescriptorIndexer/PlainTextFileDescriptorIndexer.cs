@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace BusinessLogic.FileMonitor
+namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
     public class PlainTextFileDescriptorIndexer : IFileDescriptorIndexer
     {

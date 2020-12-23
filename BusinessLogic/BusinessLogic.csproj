@@ -42,19 +42,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileMonitor\ChangeInfo.cs" />
-    <Compile Include="FileMonitor\FileDescriptor.cs" />
-    <Compile Include="FileMonitor\FileDescriptorUpdater.cs" />
+    <Compile Include="FileMonitor\FileDescriptor\FileDescriptor.cs" />
+    <Compile Include="FileMonitor\FileDescriptor\FileDescriptorUpdater.cs" />
     <Compile Include="FileMonitor\FileMonitor.cs" />
     <Compile Include="FileMonitor\FileWatcherWrapper.cs" />
     <Compile Include="FileMonitor\FileWatcherWrapperFactory.cs" />
-    <Compile Include="FileMonitor\IFileDescriptorIndexer.cs" />
-    <Compile Include="FileMonitor\IFileDescriptorUpdater.cs" />
+    <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\IFileDescriptorIndexer.cs" />
+    <Compile Include="FileMonitor\FileDescriptor\IFileDescriptorUpdater.cs" />
     <Compile Include="FileMonitor\IFileMonitor.cs" />
     <Compile Include="FileMonitor\IFileWatcherWrapper.cs" />
     <Compile Include="FileMonitor\IFileWatcherWrapperFactory.cs" />
     <Compile Include="FileMonitor\IStringListPersister.cs" />
     <Compile Include="FileMonitor\IThreadWrapper.cs" />
-    <Compile Include="FileMonitor\PlainTextFileDescriptorIndexer.cs" />
+    <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\PlainTextFileDescriptorIndexer.cs" />
     <Compile Include="FileMonitor\ThreadWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

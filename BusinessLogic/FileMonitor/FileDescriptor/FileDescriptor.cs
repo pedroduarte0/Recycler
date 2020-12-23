@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic.FileMonitor
+﻿namespace BusinessLogic.FileMonitor.FileDescriptor
 {
     public class FileDescriptor
     {

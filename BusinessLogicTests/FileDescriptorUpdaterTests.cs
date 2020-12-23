@@ -1,6 +1,8 @@
 ﻿using BusinessLogic.FileMonitor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using BusinessLogic.FileMonitor.FileDescriptor;
+using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
 
 namespace BusinessLogicTests
 {

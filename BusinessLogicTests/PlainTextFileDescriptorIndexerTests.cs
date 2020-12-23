@@ -1,4 +1,6 @@
 ﻿using BusinessLogic.FileMonitor;
+using BusinessLogic.FileMonitor.FileDescriptor;
+using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
 using System.Linq;

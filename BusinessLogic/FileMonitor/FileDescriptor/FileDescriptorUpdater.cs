@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
 
-namespace BusinessLogic.FileMonitor
+namespace BusinessLogic.FileMonitor.FileDescriptor
 {
     /// <summary>
     /// Handles a created ChangeInfo and
