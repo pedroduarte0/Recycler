@@ -30,6 +30,24 @@ namespace BusinessLogic.FileMonitor
             }
         }
 
+        public void RemoveFolderForMonitoring(string path)
+        {
+            m_monitoredFolders.Remove(path);
+
+            if (m_fileWatcherWrappers.ContainsKey(path))
+            {
+                var watcher = m_fileWatcherWrappers[path];
+                watcher.Changed -= new FileSystemEventHandler(OnChanged);
+                watcher.Dispose();
+                m_fileWatcherWrappers.Remove(path);
+            }
+        }
+
+        public void PersistFolders()
+        {
+            m_persister.Persist(m_monitoredFolders);
+        }
+
         private void Setup(IFileWatcherWrapper fileWatcherWrapper)
         {
             fileWatcherWrapper.IncludeSubdirectories = false;
@@ -44,28 +62,10 @@ namespace BusinessLogic.FileMonitor
         {
         }
 
-        public void RemoveFolderForMonitoring(string path)
-        {
-            m_monitoredFolders.Remove(path);
-
-            if (m_fileWatcherWrappers.ContainsKey(path))
-            {
-                var watcher = m_fileWatcherWrappers[path];
-                watcher.Changed -= new FileSystemEventHandler(OnChanged);
-                watcher.Dispose();
-                m_fileWatcherWrappers.Remove(path);
-            }
-        }
-
         internal IList<string> GetMonitoredFolderPath()
         {
             // TODO: return a copy.
             return m_monitoredFolders;
-        }
-
-        public void PersistFolders()
-        {
-            m_persister.Persist(m_monitoredFolders);
         }
     }
 }
