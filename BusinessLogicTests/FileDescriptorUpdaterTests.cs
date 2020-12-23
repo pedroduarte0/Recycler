@@ -37,7 +37,7 @@ namespace BusinessLogicTests
         }
 
         [TestMethod]
-        public void QueueHandler_ChangeInfoTypeCreated_CreatesFileDescriptor()
+        public void QueueHandler_ChangeInfoTypeCreated_InsertsFileDescriptor()
         {
             // Arrange
             var fileDescriptorIndexer = Mock.Of<IFileDescriptorIndexer>();
@@ -50,7 +50,30 @@ namespace BusinessLogicTests
             sut.QueueHandler();
 
             // Assert
-            Mock.Get(fileDescriptorIndexer).Verify(x => x.Add(It.IsAny<FileDescriptor>()), Times.Once);
+            Mock.Get(fileDescriptorIndexer)
+                .Verify(x => x.Insert(
+                    It.Is<FileDescriptor>(fd => fd.ChangeInfoType == ChangeInfoType.Created)),
+                    Times.Once);
+        }
+
+        [TestMethod]
+        public void QueueHandler_ChangeInfoTypeDeleted_RemovesFileDescriptor()
+        {
+            // Arrange
+            var fileDescriptorIndexer = Mock.Of<IFileDescriptorIndexer>();
+            var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), fileDescriptorIndexer);
+
+            var deletedFileChangeInfo = new ChangeInfo(ChangeInfoType.Deleted, "filepath", "name");
+            sut.Enqueue(deletedFileChangeInfo);
+
+            // Act
+            sut.QueueHandler();
+
+            // Assert
+            Mock.Get(fileDescriptorIndexer)
+                .Verify(x => x.Remove(
+                    It.Is<FileDescriptor>(fd => fd.ChangeInfoType == ChangeInfoType.Deleted)),
+                    Times.Once);
         }
     }
 }

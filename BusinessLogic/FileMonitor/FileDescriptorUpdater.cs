@@ -16,7 +16,7 @@ namespace BusinessLogic.FileMonitor
         private const int MonitorPeriod = 2000;
         private readonly IThreadWrapper m_threadWrapper;
         private readonly IFileDescriptorIndexer m_fileDescriptorIndexer;
-        static ConcurrentQueue<ChangeInfo> m_queue = new ConcurrentQueue<ChangeInfo>();
+        private ConcurrentQueue<ChangeInfo> m_queue = new ConcurrentQueue<ChangeInfo>();
 
         public FileDescriptorUpdater(IThreadWrapper threadWrapper, IFileDescriptorIndexer fileDescriptorIndexer)
         {
@@ -38,9 +38,22 @@ namespace BusinessLogic.FileMonitor
             {
                 if (m_queue.TryDequeue(out ChangeInfo item))
                 {
-                    //TODO if change is new, create FileDescriptor and m_fileDescriptorIndexer.Add(descriptor)
-                    //     if change is deleted, m_fileDescriptorIndexer.Remove(descriptor)
+                    switch (item.ChangeInfoType)
+                    {
+                        case ChangeInfoType.Created:
+                            // TODO: Replace class ChangeInfo with FileDescriptor
+                            var created = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
+                            m_fileDescriptorIndexer.Insert(created);
+                            break;
 
+                        case ChangeInfoType.Deleted:
+                            var deleted = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
+                            m_fileDescriptorIndexer.Remove(deleted);
+                            break;
+
+                        default:
+                            break;
+                    }
                     Console.WriteLine($"FileDescriptorUpdater: Processed '{item.FullPath}'");
                 }
             }

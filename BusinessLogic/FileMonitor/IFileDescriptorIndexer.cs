@@ -2,7 +2,7 @@
 {
     public interface IFileDescriptorIndexer
     {
-        void Add(FileDescriptor descriptor);
+        void Insert(FileDescriptor descriptor);
         void Remove(FileDescriptor descriptor);
     }
 }
