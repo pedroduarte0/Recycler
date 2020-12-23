@@ -53,7 +53,7 @@ namespace BusinessLogic.FileMonitor
             fileWatcherWrapper.IncludeSubdirectories = false;
             fileWatcherWrapper.EnableRaisingEvents = true;
             fileWatcherWrapper.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-                | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+                | NotifyFilters.FileName;
 
             fileWatcherWrapper.Changed += new FileSystemEventHandler(OnFileWatcherChanged);
         }
