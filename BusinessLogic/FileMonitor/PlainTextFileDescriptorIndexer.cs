@@ -26,7 +26,7 @@ namespace BusinessLogic.FileMonitor
 
         public void Remove(FileDescriptor descriptor)
         {
-            throw new NotImplementedException();
+            m_descriptors.Remove(GetKey(descriptor));
         }
 
         public ICollection<FileDescriptor> RetrieveAll()

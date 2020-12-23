@@ -9,7 +9,7 @@ namespace BusinessLogicTests
     public class PlainTextFileDescriptorIndexerTests
     {
         [TestMethod]
-        public void Insert_FileDescriptor_Exists()
+        public void Insert_FileDescriptor_Inserted()
         {
             // Arrange
             var sut = new PlainTextFileDescriptorIndexer();
@@ -64,6 +64,22 @@ namespace BusinessLogicTests
             // Assert
             sut.Exists(fd).Should().BeTrue();
             sut.RetrieveAll().First().Age.Should().Be(expectedAge);
+        }
+
+        [TestMethod]
+        public void Remove_FileDescriptor_Removed()
+        {
+            // Arrange
+            var sut = new PlainTextFileDescriptorIndexer();
+
+            var fd = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
+            sut.Insert(fd);
+
+            // Act
+            sut.Remove(fd);
+
+            // Assert
+            sut.Exists(fd).Should().BeFalse();
         }
     }
 }
