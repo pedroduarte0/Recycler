@@ -25,7 +25,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
         public void Persist()
         {
             string json = m_serializer.Serialize(m_descriptors);
-            m_storage.Save(json, "FileDescriptorIndex.txt");
+            m_storage.Save(json, "FileDescriptorIndex.json");
         }
 
         public void Remove(FileDescriptor descriptor)
