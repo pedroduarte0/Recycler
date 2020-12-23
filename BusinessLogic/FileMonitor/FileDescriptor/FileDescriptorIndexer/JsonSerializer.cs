@@ -11,5 +11,10 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
         {
             return JsonConvert.SerializeObject(objectToSerialize);
         }
+
+        public object Deserialize(string path)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

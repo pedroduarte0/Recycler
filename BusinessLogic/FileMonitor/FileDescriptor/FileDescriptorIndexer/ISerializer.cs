@@ -3,5 +3,6 @@
     public interface ISerializer
     {
         string Serialize(object objectToSerialize);
+        object Deserialize(string path);
     }
 }

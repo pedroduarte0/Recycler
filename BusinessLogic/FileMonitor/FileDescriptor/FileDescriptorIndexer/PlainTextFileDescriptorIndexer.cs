@@ -9,12 +9,18 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
         private readonly ISerializer m_serializer;
         private readonly IStorage m_storage;
         private Dictionary<string, FileDescriptor> m_descriptors;
+        const string m_indexPath = "FileDescriptorIndex.json";
 
         public PlainTextFileDescriptorIndexer(ISerializer serializer, IStorage storage)
         {
-            m_descriptors = new Dictionary<string, FileDescriptor>();   //TODO: Load from file.
+            m_descriptors = new Dictionary<string, FileDescriptor>();
             m_serializer = serializer;
             m_storage = storage;
+        }
+
+        public void Initialize()
+        {
+            m_descriptors = m_serializer.Deserialize(m_indexPath) as Dictionary<string, FileDescriptor>;
         }
 
         public void Insert(FileDescriptor descriptor)
@@ -25,7 +31,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
         public void Persist()
         {
             string json = m_serializer.Serialize(m_descriptors);
-            m_storage.Save(json, "FileDescriptorIndex.json");
+            m_storage.Save(json, m_indexPath);
         }
 
         public void Remove(FileDescriptor descriptor)

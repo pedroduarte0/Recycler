@@ -4,6 +4,8 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
     public interface IFileDescriptorIndexer
     {
+        void Initialize();
+
         void Insert(FileDescriptor descriptor);
 
         ICollection<FileDescriptor> RetrieveAll();

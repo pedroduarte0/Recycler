@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
 using Moq;
 using System.Linq;
+using System.Collections.Generic;
+using System.IO;
 
 namespace BusinessLogicTests
 {
@@ -112,6 +114,52 @@ namespace BusinessLogicTests
             // Assert
             serializer.Verify(x => x.Serialize(It.IsAny<object>()), Times.Once);
             storage.Verify(x => x.Save(serializationResult, It.IsAny<string>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void Initialize_WhenCalled_DeserializesIndex()
+        {
+            // Arrange
+            var serializer = new Mock<ISerializer>();
+
+            var sut = new IndexerBuilder()
+                .With(serializer.Object)
+                .Build();
+
+            // Act
+            sut.Initialize();
+
+            // Assert
+            serializer.Verify(x => x.Deserialize(It.IsAny<string>()));
+        }
+
+        [TestMethod]
+        public void Initialize_WhenCalled_RestoresIndex()
+        {
+            // Arrange
+            var descriptor = new FileDescriptor(ChangeInfoType.Created, "fullPath", "name");
+            var index = new Dictionary<string, FileDescriptor>
+            {
+                ["a key"] = descriptor
+            };
+
+            var serializer = new Mock<ISerializer>();
+            serializer.Setup(x => x.Deserialize(It.IsAny<string>()))
+                .Returns(index);
+
+            var storage = new Mock<IStorage>();
+
+            var sut = new IndexerBuilder()
+                .With(serializer.Object)
+                .Build();
+
+            sut.Initialize();
+
+            // Act
+            var descriptors = sut.RetrieveAll();
+
+            // Assert
+            Assert.AreEqual(descriptors.FirstOrDefault(), descriptor);
         }
     }
 
