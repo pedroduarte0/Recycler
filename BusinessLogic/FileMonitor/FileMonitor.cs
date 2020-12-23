@@ -6,15 +6,15 @@ namespace BusinessLogic.FileMonitor
     public class FileMonitor : IFileMonitor
     {
         private List<string> m_monitoredFolders;
-        private readonly IStringListPersister m_persister;
+        private readonly IStorage m_storage;
         private readonly IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
         internal readonly Dictionary<string, IFileWatcherWrapper> m_fileWatcherWrappers;    // TODO: Dispose instances
 
-        public FileMonitor(IStringListPersister persister, IFileWatcherWrapperFactory factory)
+        public FileMonitor(IStorage storage, IFileWatcherWrapperFactory factory)
         {
             m_monitoredFolders = new List<string>();
             m_fileWatcherWrappers = new Dictionary<string, IFileWatcherWrapper>();
-            m_persister = persister;
+            m_storage = storage;
             m_fileWatcherWrapperFactory = factory;
         }
 
@@ -45,7 +45,7 @@ namespace BusinessLogic.FileMonitor
 
         public void PersistFolders()
         {
-            m_persister.Persist(m_monitoredFolders);
+            m_storage.Save(m_monitoredFolders, "monitoresFoldersList.txt");
         }
 
         private void Setup(IFileWatcherWrapper fileWatcherWrapper)

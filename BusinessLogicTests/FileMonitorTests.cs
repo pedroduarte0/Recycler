@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BusinessLogic;
 using BusinessLogic.FileMonitor;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -114,7 +115,8 @@ namespace BusinessLogicTests
             fileWatcherMock
                 .VerifySet(x => x.EnableRaisingEvents = true);
             fileWatcherMock
-                .VerifySet(x => x.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName);
+                .VerifySet(x => x.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+                | NotifyFilters.FileName);
 
             //fileWatcherMock.VerifyAdd(m => m.Changed += It.IsAny<FileSystemEventHandler>(), Times.Once);     // Does not work?!
         }
@@ -233,10 +235,10 @@ namespace BusinessLogicTests
             string path1 = "path1";
             string path2 = "path2";
 
-            var stringListPersisterMock = new Mock<IStringListPersister>();
+            var storageMock = new Mock<IStorage>();
 
             var fileMonitor = new FileMonitorBuilder()
-                .With(stringListPersisterMock)
+                .With(storageMock)
                 .Build();
 
             fileMonitor.AddFolderForMonitoring(path1);
@@ -246,7 +248,7 @@ namespace BusinessLogicTests
             fileMonitor.PersistFolders();
 
             // Assert
-            stringListPersisterMock.Verify(x => x.Persist(It.IsAny<IList<string>>()));
+            storageMock.Verify(x => x.Save(It.IsAny<List<string>>(), It.IsAny<string>()));
         }
 
         [TestMethod]
@@ -281,20 +283,20 @@ namespace BusinessLogicTests
 
     internal class FileMonitorBuilder
     {
-        private Mock<IStringListPersister> m_stringListPersisterMock;
+        private Mock<IStorage> m_storageMock;
         private IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
 
         public FileMonitorBuilder()
         {
-            m_stringListPersisterMock = new Mock<IStringListPersister>();
+            m_storageMock = new Mock<IStorage>();
 
             m_fileWatcherWrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
                 f => f.Create(It.IsAny<string>()) == Mock.Of<IFileWatcherWrapper>());
         }
 
-        public FileMonitorBuilder With(Mock<IStringListPersister> mock)
+        public FileMonitorBuilder With(Mock<IStorage> mock)
         {
-            m_stringListPersisterMock = mock;
+            m_storageMock = mock;
             return this;
         }
 
@@ -306,7 +308,7 @@ namespace BusinessLogicTests
 
         public FileMonitor Build()
         {
-            return new FileMonitor(m_stringListPersisterMock.Object, m_fileWatcherWrapperFactory);
+            return new FileMonitor(m_storageMock.Object, m_fileWatcherWrapperFactory);
         }
     }
 }
