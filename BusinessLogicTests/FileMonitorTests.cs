@@ -58,7 +58,7 @@ namespace BusinessLogicTests
                f.Create(path) == Mock.Of<IFileWatcherWrapper>());
 
             var fileMonitor = new FileMonitorBuilder()
-                .WithFileWatcherWrapperFactory(factory)
+                .With(factory)
                 .Build();
 
             // Act
@@ -79,7 +79,7 @@ namespace BusinessLogicTests
             f.Create(path) == Mock.Of<IFileWatcherWrapper>());
 
             var fileMonitor = new FileMonitorBuilder()
-                .WithFileWatcherWrapperFactory(factory)
+                .With(factory)
                 .Build();
 
             // Act
@@ -102,7 +102,7 @@ namespace BusinessLogicTests
                f.Create(path) == fileWatcher);
 
             var fileMonitor = new FileMonitorBuilder()
-                .WithFileWatcherWrapperFactory(factory)
+                .With(factory)
                 .Build();
 
             // Act
@@ -190,7 +190,7 @@ namespace BusinessLogicTests
                 f => f.Create(It.IsAny<string>()) == wrapper);
 
             var fileMonitor = new FileMonitorBuilder()
-                .WithFileWatcherWrapperFactory(wrapperFactory)
+                .With(wrapperFactory)
                 .Build();
 
             fileMonitor.AddFolderForMonitoring(path);
@@ -214,7 +214,7 @@ namespace BusinessLogicTests
                 f => f.Create(It.IsAny<string>()) == wrapper);
 
             var fileMonitor = new FileMonitorBuilder()
-                .WithFileWatcherWrapperFactory(wrapperFactory)
+                .With(wrapperFactory)
                 .Build();
 
             fileMonitor.AddFolderForMonitoring(path);
@@ -235,10 +235,10 @@ namespace BusinessLogicTests
             string path1 = "path1";
             string path2 = "path2";
 
-            var storageMock = new Mock<IStorage>();
+            var storage = Mock.Of<IStorage>();
 
             var fileMonitor = new FileMonitorBuilder()
-                .With(storageMock)
+                .With(storage)
                 .Build();
 
             fileMonitor.AddFolderForMonitoring(path1);
@@ -248,7 +248,8 @@ namespace BusinessLogicTests
             fileMonitor.PersistFolders();
 
             // Assert
-            storageMock.Verify(x => x.Save(It.IsAny<List<string>>(), It.IsAny<string>()));
+            Mock.Get(storage)
+                .Verify(x => x.Save(It.IsAny<List<string>>(), It.IsAny<string>()));
         }
 
         [TestMethod]
@@ -263,7 +264,7 @@ namespace BusinessLogicTests
                f.Create(path) == fileWatcher);
 
             var fileMonitor = new FileMonitorBuilder()
-                .WithFileWatcherWrapperFactory(factory)
+                .With(factory)
                 .Build();
 
             fileMonitor.AddFolderForMonitoring(path);
@@ -283,24 +284,24 @@ namespace BusinessLogicTests
 
     internal class FileMonitorBuilder
     {
-        private Mock<IStorage> m_storageMock;
+        private IStorage m_storage;
         private IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
 
         public FileMonitorBuilder()
         {
-            m_storageMock = new Mock<IStorage>();
+            m_storage = Mock.Of<IStorage>();
 
             m_fileWatcherWrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
                 f => f.Create(It.IsAny<string>()) == Mock.Of<IFileWatcherWrapper>());
         }
 
-        public FileMonitorBuilder With(Mock<IStorage> mock)
+        public FileMonitorBuilder With(IStorage storage)
         {
-            m_storageMock = mock;
+            m_storage = storage;
             return this;
         }
 
-        public FileMonitorBuilder WithFileWatcherWrapperFactory(IFileWatcherWrapperFactory factory)
+        public FileMonitorBuilder With(IFileWatcherWrapperFactory factory)
         {
             m_fileWatcherWrapperFactory = factory;
             return this;
@@ -308,7 +309,7 @@ namespace BusinessLogicTests
 
         public FileMonitor Build()
         {
-            return new FileMonitor(m_storageMock.Object, m_fileWatcherWrapperFactory);
+            return new FileMonitor(m_storage, m_fileWatcherWrapperFactory);
         }
     }
 }
