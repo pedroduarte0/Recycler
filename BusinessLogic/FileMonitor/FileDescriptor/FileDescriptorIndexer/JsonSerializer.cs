@@ -2,19 +2,10 @@
 
 namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
-    // TODO: Currently under evaluation. Not used at the moment since it leads to user implementation details leaking.
-    public class JsonSerializer<T> : ISerializer<T>
-    {
-        public string Serialize(T objectToSerialize)
-        {
-            return JsonConvert.SerializeObject(objectToSerialize);
-        }
-    }
-
     /// <summary>
-    /// Tests for JsonSerializer are done in 3rd party library tests.
+    /// Tests for JsonSerializer are done in 3rd party library tests (example: result = serialize(o), assert o == deserialize(result))
     /// </summary>
-    public class JsonSerializer : ISerializer2
+    public class JsonSerializer : ISerializer
     {
         public string Serialize(object objectToSerialize)
         {

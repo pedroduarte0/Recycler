@@ -6,11 +6,11 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
     public class PlainTextFileDescriptorIndexer : IFileDescriptorIndexer
     {
-        private readonly ISerializer2 m_serializer;
+        private readonly ISerializer m_serializer;
         private readonly IStorage m_storage;
         private Dictionary<string, FileDescriptor> m_descriptors;
 
-        public PlainTextFileDescriptorIndexer(ISerializer2 serializer, IStorage storage)
+        public PlainTextFileDescriptorIndexer(ISerializer serializer, IStorage storage)
         {
             m_descriptors = new Dictionary<string, FileDescriptor>();   //TODO: Load from file.
             m_serializer = serializer;

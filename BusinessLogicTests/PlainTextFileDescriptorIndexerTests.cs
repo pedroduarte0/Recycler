@@ -92,7 +92,7 @@ namespace BusinessLogicTests
             // Arrange
             const string serializationResult = "json string";
 
-            var serializer = new Mock<ISerializer2>();
+            var serializer = new Mock<ISerializer>();
             serializer.Setup(x => x.Serialize(It.IsAny<object>()))
                 .Returns(serializationResult);
 
@@ -118,15 +118,15 @@ namespace BusinessLogicTests
     internal class IndexerBuilder
     {
         private IStorage m_storage;
-        private ISerializer2 m_serializer;
+        private ISerializer m_serializer;
 
         public IndexerBuilder()
         {
             m_storage = Mock.Of<IStorage>();
-            m_serializer = Mock.Of<ISerializer2>();
+            m_serializer = Mock.Of<ISerializer>();
         }
 
-        public IndexerBuilder With(ISerializer2 serializer)
+        public IndexerBuilder With(ISerializer serializer)
         {
             m_serializer = serializer;
             return this;
