@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.IO;
 
 namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
@@ -14,7 +15,8 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         public object Deserialize(string path)
         {
-            throw new System.NotImplementedException();
+            string text = File.ReadAllText(path);
+            return JsonConvert.DeserializeObject(text);
         }
     }
 }
