@@ -87,6 +87,8 @@ namespace BusinessLogic.FileMonitor
 
             // TODO: Temporary, provide proper implementation (put into a thread safe queue for example)
             LastCreatedChangeInfo = changeInfo;
+
+            //TODO: queue the changeInfo
         }
 
         internal IList<string> GetMonitoredFolderPath()
@@ -97,25 +99,5 @@ namespace BusinessLogic.FileMonitor
 
         //TODO: Temporary
         internal ChangeInfo LastCreatedChangeInfo { get; set; }
-    }
-
-    public class ChangeInfo
-    {
-        public ChangeInfoType ChangeInfoType { get; private set; }
-        public string FullPath { get; private set; }
-        public string Name { get; private set; }
-
-        public ChangeInfo(ChangeInfoType changeInfoType, string fullPath, string name)
-        {
-            ChangeInfoType = changeInfoType;
-            FullPath = fullPath;
-            Name = name;
-        }
-    }
-
-    public enum ChangeInfoType
-    {
-        Created,
-        Deleted
     }
 }

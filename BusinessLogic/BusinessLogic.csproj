@@ -41,13 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileMonitor\ChangeInfo.cs" />
+    <Compile Include="FileMonitor\FileDescriptorUpdater.cs" />
     <Compile Include="FileMonitor\FileMonitor.cs" />
     <Compile Include="FileMonitor\FileWatcherWrapper.cs" />
     <Compile Include="FileMonitor\FileWatcherWrapperFactory.cs" />
+    <Compile Include="FileMonitor\IFileDescriptorUpdater.cs" />
     <Compile Include="FileMonitor\IFileMonitor.cs" />
     <Compile Include="FileMonitor\IFileWatcherWrapper.cs" />
     <Compile Include="FileMonitor\IFileWatcherWrapperFactory.cs" />
     <Compile Include="FileMonitor\IStringListPersister.cs" />
+    <Compile Include="FileMonitor\IThreadWrapper.cs" />
+    <Compile Include="FileMonitor\ThreadWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
