@@ -8,7 +8,7 @@ namespace BusinessLogic.FileMonitor
         private List<string> m_monitoredFolders;
         private readonly IStorage m_storage;
         private readonly IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
-        internal readonly Dictionary<string, IFileWatcherWrapper> m_fileWatcherWrappers;    // TODO: Dispose instances
+        internal readonly Dictionary<string, IFileWatcherWrapper> m_fileWatcherWrappers;    // TODO: Confirm instances are being disposed.
 
         public FileMonitor(IStorage storage, IFileWatcherWrapperFactory factory)
         {
@@ -24,8 +24,8 @@ namespace BusinessLogic.FileMonitor
 
             if (m_fileWatcherWrappers.ContainsKey(path) == false)
             {
-                var fileWatcherWrapper = m_fileWatcherWrapperFactory.Create(path);
-                Setup(fileWatcherWrapper);
+                var fileWatcherWrapper = m_fileWatcherWrapperFactory.Create();
+                Setup(fileWatcherWrapper, path);
                 m_fileWatcherWrappers[path] = fileWatcherWrapper;
             }
         }
@@ -37,7 +37,9 @@ namespace BusinessLogic.FileMonitor
             if (m_fileWatcherWrappers.ContainsKey(path))
             {
                 var watcher = m_fileWatcherWrappers[path];
-                watcher.Changed -= new FileSystemEventHandler(OnFileWatcherChanged);
+                watcher.Changed -= new FileSystemEventHandler(OnFileWatcherEvent);
+                watcher.Created -= new FileSystemEventHandler(OnFileWatcherEvent);
+                watcher.Deleted -= new FileSystemEventHandler(OnFileWatcherEvent);
                 watcher.Dispose();
                 m_fileWatcherWrappers.Remove(path);
             }
@@ -48,17 +50,21 @@ namespace BusinessLogic.FileMonitor
             m_storage.Save(m_monitoredFolders, "monitoresFoldersList.txt");
         }
 
-        private void Setup(IFileWatcherWrapper fileWatcherWrapper)
+        private void Setup(IFileWatcherWrapper fileWatcherWrapper, string path)
         {
+            fileWatcherWrapper.Path = path;
+
             fileWatcherWrapper.IncludeSubdirectories = false;
-            fileWatcherWrapper.EnableRaisingEvents = true;
             fileWatcherWrapper.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
                 | NotifyFilters.FileName;
 
-            fileWatcherWrapper.Changed += new FileSystemEventHandler(OnFileWatcherChanged);
+            fileWatcherWrapper.Created += new FileSystemEventHandler(OnFileWatcherEvent);
+            fileWatcherWrapper.Changed += new FileSystemEventHandler(OnFileWatcherEvent);
+            fileWatcherWrapper.Deleted += new FileSystemEventHandler(OnFileWatcherEvent);
+            fileWatcherWrapper.EnableRaisingEvents = true;
         }
 
-        private void OnFileWatcherChanged(object sender, FileSystemEventArgs e)
+        private void OnFileWatcherEvent(object sender, FileSystemEventArgs e)
         {
             var changeInfoType = ChangeInfoType.Created;
 
@@ -88,7 +94,7 @@ namespace BusinessLogic.FileMonitor
             // TODO: Temporary, provide proper implementation (put into a thread safe queue for example)
             LastCreatedChangeInfo = changeInfo;
 
-            //TODO: queue the changeInfo
+            //TODO: queue the changeInfo, using FileDescriptorUpdater
         }
 
         internal IList<string> GetMonitoredFolderPath()

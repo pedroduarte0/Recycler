@@ -14,10 +14,9 @@ namespace BusinessLogicTests
         {
             // Arrange
             var sut = new FileWatcherWrapperFactory();
-            string someRealPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             // Act
-            var instance = sut.Create(someRealPath);
+            var instance = sut.Create();
 
             // Assert
             instance.Should().NotBeNull();

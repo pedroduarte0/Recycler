@@ -2,9 +2,9 @@
 {
     public class FileWatcherWrapperFactory : IFileWatcherWrapperFactory
     {
-        public IFileWatcherWrapper Create(string folderPath)
+        public IFileWatcherWrapper Create()
         {
-            return new FileWatcherWrapper(folderPath);
+            return new FileWatcherWrapper();
         }
     }
 }
