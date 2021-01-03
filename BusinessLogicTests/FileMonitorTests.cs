@@ -55,7 +55,7 @@ namespace BusinessLogicTests
             const string path = "path to folder";
 
             var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-               f.Create(path) == Mock.Of<IFileWatcherWrapper>());
+               f.Create() == Mock.Of<IFileWatcherWrapper>());
 
             var fileMonitor = new FileMonitorBuilder()
                 .With(factory)
@@ -66,7 +66,7 @@ namespace BusinessLogicTests
 
             // Assert
             Mock.Get(factory)
-                .Verify(x => x.Create(path), Times.Once);
+                .Verify(x => x.Create(), Times.Once);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace BusinessLogicTests
             const string path = "path to folder";
 
             var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-            f.Create(path) == Mock.Of<IFileWatcherWrapper>());
+            f.Create() == Mock.Of<IFileWatcherWrapper>());
 
             var fileMonitor = new FileMonitorBuilder()
                 .With(factory)
@@ -88,7 +88,7 @@ namespace BusinessLogicTests
 
             // Assert
             Mock.Get(factory)
-                .Verify(x => x.Create(path), Times.Once);
+                .Verify(x => x.Create(), Times.Once);
         }
 
         [TestMethod]
@@ -99,7 +99,7 @@ namespace BusinessLogicTests
             var fileWatcher = Mock.Of<IFileWatcherWrapper>();
 
             var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-               f.Create(path) == fileWatcher);
+               f.Create() == fileWatcher);
 
             var fileMonitor = new FileMonitorBuilder()
                 .With(factory)
@@ -187,7 +187,7 @@ namespace BusinessLogicTests
             var wrapper = Mock.Of<IFileWatcherWrapper>();
 
             var wrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
-                f => f.Create(It.IsAny<string>()) == wrapper);
+                f => f.Create() == wrapper);
 
             var fileMonitor = new FileMonitorBuilder()
                 .With(wrapperFactory)
@@ -211,7 +211,7 @@ namespace BusinessLogicTests
             var wrapper = Mock.Of<IFileWatcherWrapper>();
 
             var wrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
-                f => f.Create(It.IsAny<string>()) == wrapper);
+                f => f.Create() == wrapper);
 
             var fileMonitor = new FileMonitorBuilder()
                 .With(wrapperFactory)
@@ -261,7 +261,7 @@ namespace BusinessLogicTests
             var fileWatcher = Mock.Of<IFileWatcherWrapper>();
 
             var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-               f.Create(path) == fileWatcher);
+               f.Create() == fileWatcher);
 
             var fileMonitor = new FileMonitorBuilder()
                 .With(factory)
@@ -292,7 +292,7 @@ namespace BusinessLogicTests
             m_storage = Mock.Of<IStorage>();
 
             m_fileWatcherWrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
-                f => f.Create(It.IsAny<string>()) == Mock.Of<IFileWatcherWrapper>());
+                f => f.Create() == Mock.Of<IFileWatcherWrapper>());
         }
 
         public FileMonitorBuilder With(IStorage storage)

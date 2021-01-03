@@ -74,8 +74,6 @@
   <ItemGroup>
     <Compile Include="FileDescriptorUpdaterTests.cs" />
     <Compile Include="FileMonitorTests.cs" />
-    <Compile Include="FileWatcherWrapperFactoryTests.cs" />
-    <Compile Include="FileWatcherWrapperTests.cs" />
     <Compile Include="PlainTextFileDescriptorIndexerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
