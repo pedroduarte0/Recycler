@@ -9,10 +9,14 @@ namespace BusinessLogic.FileMonitor
 
         bool IncludeSubdirectories { get; set; }
 
-        bool IsFileSystemWatcherNull();
-
         NotifyFilters NotifyFilter { get; set; }
 
+        string Path { get; set; }
+
+        event FileSystemEventHandler Created;
+
         event FileSystemEventHandler Changed;
+
+        event FileSystemEventHandler Deleted;
     }
 }
