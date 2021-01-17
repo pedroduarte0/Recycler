@@ -1,5 +1,7 @@
 ﻿using BusinessLogic;
 using BusinessLogic.FileMonitor;
+using BusinessLogic.FileMonitor.FileDescriptor;
+using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -17,10 +19,13 @@ namespace Recycler
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            BusinessLogic.IStorage storage = new TestStorage();
+            IStorage storage = new TestStorage();
             IFileWatcherWrapperFactory fileWatcherWrapperFactory = new FileWatcherWrapperFactory();
+            IThreadWrapper threadWrapper = null;
+            IFileDescriptorIndexer descriptorIndexer = null;
+            IFileDescriptorUpdater descriptorUpdater = new FileDescriptorUpdater(threadWrapper, descriptorIndexer);
 
-            IFileMonitor fileMonitor = new FileMonitor(storage, fileWatcherWrapperFactory);
+            IFileMonitor fileMonitor = new FileMonitor(storage, fileWatcherWrapperFactory, descriptorUpdater);
             fileMonitor.AddFolderForMonitoring("C:\\temp");
 
             while (true)

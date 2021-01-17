@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BusinessLogic.FileMonitor.FileDescriptor;
+using System.Collections.Generic;
 using System.IO;
 
 namespace BusinessLogic.FileMonitor
@@ -8,14 +9,16 @@ namespace BusinessLogic.FileMonitor
         private List<string> m_monitoredFolders;
         private readonly IStorage m_storage;
         private readonly IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
+        private readonly IFileDescriptorUpdater m_descriptorUpdater;
         internal readonly Dictionary<string, IFileWatcherWrapper> m_fileWatcherWrappers;    // TODO: Confirm instances are being disposed.
 
-        public FileMonitor(IStorage storage, IFileWatcherWrapperFactory factory)
+        public FileMonitor(IStorage storage, IFileWatcherWrapperFactory factory, IFileDescriptorUpdater descriptorUpdater)
         {
             m_monitoredFolders = new List<string>();
             m_fileWatcherWrappers = new Dictionary<string, IFileWatcherWrapper>();
             m_storage = storage;
             m_fileWatcherWrapperFactory = factory;
+            m_descriptorUpdater = descriptorUpdater;
         }
 
         public void AddFolderForMonitoring(string path)
@@ -91,10 +94,7 @@ namespace BusinessLogic.FileMonitor
 
             var changeInfo = new ChangeInfo(changeInfoType, e.FullPath, e.Name);
 
-            // TODO: Temporary, provide proper implementation (put into a thread safe queue for example)
-            LastCreatedChangeInfo = changeInfo;
-
-            //TODO: queue the changeInfo, using FileDescriptorUpdater
+            m_descriptorUpdater.Enqueue(changeInfo);
         }
 
         internal IList<string> GetMonitoredFolderPath()
@@ -102,8 +102,5 @@ namespace BusinessLogic.FileMonitor
             // TODO: return a copy.
             return m_monitoredFolders;
         }
-
-        //TODO: Temporary
-        internal ChangeInfo LastCreatedChangeInfo { get; set; }
     }
 }
