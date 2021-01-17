@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using BusinessLogic;
 using BusinessLogic.FileMonitor;
+using BusinessLogic.FileMonitor.FileDescriptor;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -280,16 +281,52 @@ namespace BusinessLogicTests
             fileMonitor.LastCreatedChangeInfo.FullPath.Should().Be(
                 Path.Combine(path, createdFileName));
         }
+
+        [TestMethod]
+        public void OnFileWatcherChanged_NewFile_EnqueuesChangeInfo()
+        {
+            const string path = "path to folder";
+            const string createdFileName = "filename";
+
+            var fileWatcher = Mock.Of<IFileWatcherWrapper>();
+
+            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
+               f.Create() == fileWatcher);
+
+            var descriptorUpdater = Mock.Of<IFileDescriptorUpdater>();
+
+            var fileMonitor = new FileMonitorBuilder()
+                .With(factory)
+                .With(descriptorUpdater)
+                .Build();
+
+            fileMonitor.AddFolderForMonitoring(path);
+
+            // Act
+            Mock.Get(fileWatcher).Raise(x => x.Changed += null,
+                new FileSystemEventArgs(
+                    changeType: WatcherChangeTypes.Created,
+                    directory: path,
+                    name: createdFileName));
+
+            // Assert
+            Mock.Get(descriptorUpdater).
+                Verify(x => x.Enqueue(It.Is<ChangeInfo>(c => c.FullPath ==
+                Path.Combine(path, createdFileName))),
+                Times.Once);
+        }
     }
 
     internal class FileMonitorBuilder
     {
         private IStorage m_storage;
         private IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
+        private IFileDescriptorUpdater m_descriptorUpdater;
 
         public FileMonitorBuilder()
         {
             m_storage = Mock.Of<IStorage>();
+            m_descriptorUpdater = Mock.Of<IFileDescriptorUpdater>();
 
             m_fileWatcherWrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
                 f => f.Create() == Mock.Of<IFileWatcherWrapper>());
@@ -307,9 +344,15 @@ namespace BusinessLogicTests
             return this;
         }
 
+        public FileMonitorBuilder With(IFileDescriptorUpdater descriptorUpdater)
+        {
+            m_descriptorUpdater = descriptorUpdater;
+            return this;
+        }
+
         public FileMonitor Build()
         {
-            return new FileMonitor(m_storage, m_fileWatcherWrapperFactory);
+            return new FileMonitor(m_storage, m_fileWatcherWrapperFactory, m_descriptorUpdater);
         }
     }
 }
