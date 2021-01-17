@@ -254,35 +254,6 @@ namespace BusinessLogicTests
         }
 
         [TestMethod]
-        public void OnFileWatcherChanged_NewFile_CreatesChangeInfo()
-        {
-            const string path = "path to folder";
-            const string createdFileName = "filename";
-
-            var fileWatcher = Mock.Of<IFileWatcherWrapper>();
-
-            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-               f.Create() == fileWatcher);
-
-            var fileMonitor = new FileMonitorBuilder()
-                .With(factory)
-                .Build();
-
-            fileMonitor.AddFolderForMonitoring(path);
-
-            // Act
-            Mock.Get(fileWatcher).Raise(x => x.Changed += null,
-                new FileSystemEventArgs(
-                    changeType: WatcherChangeTypes.Created,
-                    directory: path,
-                    name: createdFileName));
-
-            // Assert
-            fileMonitor.LastCreatedChangeInfo.FullPath.Should().Be(
-                Path.Combine(path, createdFileName));
-        }
-
-        [TestMethod]
         public void OnFileWatcherChanged_NewFile_EnqueuesChangeInfo()
         {
             const string path = "path to folder";

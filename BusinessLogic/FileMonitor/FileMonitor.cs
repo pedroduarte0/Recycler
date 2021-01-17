@@ -94,9 +94,6 @@ namespace BusinessLogic.FileMonitor
 
             var changeInfo = new ChangeInfo(changeInfoType, e.FullPath, e.Name);
 
-            // TODO: Temporary, provide proper implementation (put into a thread safe queue for example)
-            LastCreatedChangeInfo = changeInfo;
-
             m_descriptorUpdater.Enqueue(changeInfo);
         }
 
@@ -105,8 +102,5 @@ namespace BusinessLogic.FileMonitor
             // TODO: return a copy.
             return m_monitoredFolders;
         }
-
-        //TODO: Temporary
-        internal ChangeInfo LastCreatedChangeInfo { get; set; }
     }
 }
