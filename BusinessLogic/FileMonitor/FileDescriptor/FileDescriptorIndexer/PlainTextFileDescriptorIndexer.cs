@@ -23,7 +23,10 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         public void Initialize()
         {
-            m_descriptors = m_serializer.Deserialize(m_indexPath) as Dictionary<string, FileDescriptor>;
+            if (m_systemIOFile.Exists(m_indexPath))
+            {
+                m_descriptors = m_serializer.Deserialize(m_indexPath) as Dictionary<string, FileDescriptor>;
+            }
         }
 
         public void Insert(FileDescriptor descriptor)

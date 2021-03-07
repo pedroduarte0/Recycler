@@ -7,7 +7,7 @@ using FluentAssertions;
 using Moq;
 using System.Linq;
 using System.Collections.Generic;
-using System.IO;
+using BusinessLogic.FrameworkAbstractions;
 
 namespace BusinessLogicTests
 {
@@ -117,6 +117,28 @@ namespace BusinessLogicTests
         }
 
         [TestMethod]
+        public void Initialize_SerializationFileDoesntExist_DoNotDeserializeIt()
+        {
+            // Arrange
+            var fileDoesntExistSystemIOFileWrapper = Mock.Of<ISystemIOFileWrapper>(
+                x => x.Exists(It.IsAny<string>()) == false);
+
+            var mockSerializer = Mock.Of<ISerializer>();
+
+            var sut = new IndexerBuilder()
+               .With(fileDoesntExistSystemIOFileWrapper)
+               .With(mockSerializer)
+               .Build();
+
+            // Act
+            sut.Initialize();
+
+            // Assert
+            Mock.Get(mockSerializer)
+                .Verify(x => x.Deserialize(It.IsAny<string>()), Times.Never);
+        }
+
+        [TestMethod]
         public void Initialize_WhenCalled_DeserializesIndex()
         {
             // Arrange
@@ -167,16 +189,24 @@ namespace BusinessLogicTests
     {
         private IStorage m_storage;
         private ISerializer m_serializer;
+        private ISystemIOFileWrapper m_systemIOFile;
 
         public IndexerBuilder()
         {
             m_storage = Mock.Of<IStorage>();
             m_serializer = Mock.Of<ISerializer>();
+            m_systemIOFile = Mock.Of<ISystemIOFileWrapper>();
         }
 
         public IndexerBuilder With(ISerializer serializer)
         {
             m_serializer = serializer;
+            return this;
+        }
+
+        public IndexerBuilder With(ISystemIOFileWrapper systemIOFile)
+        {
+            m_systemIOFile = systemIOFile;
             return this;
         }
 
@@ -188,7 +218,7 @@ namespace BusinessLogicTests
 
         public PlainTextFileDescriptorIndexer Build()
         {
-            return new PlainTextFileDescriptorIndexer(m_serializer, m_storage);
+            return new PlainTextFileDescriptorIndexer(m_serializer, m_storage, m_systemIOFile);
         }
     }
 }
