@@ -60,6 +60,8 @@
     <Compile Include="FileMonitor\IThreadWrapper.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\PlainTextFileDescriptorIndexer.cs" />
     <Compile Include="FileMonitor\ThreadWrapper.cs" />
+    <Compile Include="FrameworkAbstractions\ISystemIOFileWrapper.cs" />
+    <Compile Include="FrameworkAbstractions\SystemIOFileWrapper.cs" />
     <Compile Include="IStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
