@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BusinessLogic.FrameworkAbstractions;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -8,14 +9,16 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
     {
         private readonly ISerializer m_serializer;
         private readonly IStorage m_storage;
+        private readonly ISystemIOFileWrapper m_systemIOFile;
         private Dictionary<string, FileDescriptor> m_descriptors;
         const string m_indexPath = "FileDescriptorIndex.json";
 
-        public PlainTextFileDescriptorIndexer(ISerializer serializer, IStorage storage)
+        public PlainTextFileDescriptorIndexer(ISerializer serializer, IStorage storage, ISystemIOFileWrapper systemIOFile)
         {
             m_descriptors = new Dictionary<string, FileDescriptor>();
             m_serializer = serializer;
             m_storage = storage;
+            m_systemIOFile = systemIOFile;
         }
 
         public void Initialize()

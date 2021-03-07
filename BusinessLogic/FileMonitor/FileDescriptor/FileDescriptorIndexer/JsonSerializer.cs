@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.IO;
+﻿using BusinessLogic.FrameworkAbstractions;
+using Newtonsoft.Json;
 
 namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
@@ -8,6 +8,13 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
     /// </summary>
     public class JsonSerializer : ISerializer
     {
+        private readonly ISystemIOFileWrapper m_systemIOFile;
+
+        public JsonSerializer(ISystemIOFileWrapper systemIOFile)
+        {
+            m_systemIOFile = systemIOFile;
+        }
+
         public string Serialize(object objectToSerialize)
         {
             return JsonConvert.SerializeObject(objectToSerialize);
@@ -15,7 +22,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         public object Deserialize(string path)
         {
-            string text = File.ReadAllText(path);
+            string text = m_systemIOFile.ReadAllText(path);
             return JsonConvert.DeserializeObject(text);
         }
     }
