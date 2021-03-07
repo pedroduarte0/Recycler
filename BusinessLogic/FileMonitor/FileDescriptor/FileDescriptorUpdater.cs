@@ -37,32 +37,35 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
 
         internal void QueueHandler()
         {
-            while (QueueHasItems())
+            while (true)
             {
-                if (m_queue.TryDequeue(out ChangeInfo item))
+                while (QueueHasItems())
                 {
-                    switch (item.ChangeInfoType)
+                    if (m_queue.TryDequeue(out ChangeInfo item))
                     {
-                        case ChangeInfoType.Created:
-                            // TODO: Replace class ChangeInfo with FileDescriptor
-                            var created = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
-                            m_fileDescriptorIndexer.Insert(created);
-                            break;
+                        switch (item.ChangeInfoType)
+                        {
+                            case ChangeInfoType.Created:
+                                // TODO: Replace class ChangeInfo with FileDescriptor
+                                var created = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
+                                m_fileDescriptorIndexer.Insert(created);
+                                break;
 
-                        case ChangeInfoType.Deleted:
-                            var deleted = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
-                            m_fileDescriptorIndexer.Remove(deleted);
-                            break;
+                            case ChangeInfoType.Deleted:
+                                var deleted = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
+                                m_fileDescriptorIndexer.Remove(deleted);
+                                break;
 
-                        default:
-                            break;
+                            default:
+                                break;
+                        }
+                        Console.WriteLine($"FileDescriptorUpdater: Processed '{item.FullPath}'");
                     }
-                    Console.WriteLine($"FileDescriptorUpdater: Processed '{item.FullPath}'");
                 }
-            }
 
-            m_fileDescriptorIndexer.Persist();
-            m_threadWrapper.ThreadSleep(MonitorPeriod);
+                m_fileDescriptorIndexer.Persist();
+                m_threadWrapper.ThreadSleep(MonitorPeriod);
+            };
         }
 
         internal bool QueueHasItems()

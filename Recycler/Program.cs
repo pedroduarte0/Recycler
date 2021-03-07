@@ -24,7 +24,7 @@ namespace Recycler
             var systemIOFile = new SystemIOFileWrapper();
 
             IStorage storage = new TestStorage();
-            IThreadWrapper threadWrapper = null;
+            IThreadWrapper threadWrapper = new ThreadWrapper();
 
             IFileWatcherWrapperFactory fileWatcherWrapperFactory = new FileWatcherWrapperFactory();
 
