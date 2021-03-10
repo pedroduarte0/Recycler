@@ -50,16 +50,18 @@
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\JsonSerializer.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorUpdater.cs" />
     <Compile Include="FileMonitor\FileMonitor.cs" />
-    <Compile Include="FileMonitor\FileWatcherWrapper.cs" />
-    <Compile Include="FileMonitor\FileWatcherWrapperFactory.cs" />
+    <Compile Include="FrameworkAbstractions\FileWatcherWrapper.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FrameworkAbstractions\FileWatcherWrapperFactory.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\IFileDescriptorIndexer.cs" />
     <Compile Include="FileMonitor\FileDescriptor\IFileDescriptorUpdater.cs" />
     <Compile Include="FileMonitor\IFileMonitor.cs" />
-    <Compile Include="FileMonitor\IFileWatcherWrapper.cs" />
-    <Compile Include="FileMonitor\IFileWatcherWrapperFactory.cs" />
-    <Compile Include="FileMonitor\IThreadWrapper.cs" />
+    <Compile Include="FrameworkAbstractions\IFileWatcherWrapper.cs" />
+    <Compile Include="FrameworkAbstractions\IFileWatcherWrapperFactory.cs" />
+    <Compile Include="FrameworkAbstractions\IThreadWrapper.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\PlainTextFileDescriptorIndexer.cs" />
-    <Compile Include="FileMonitor\ThreadWrapper.cs" />
+    <Compile Include="FrameworkAbstractions\ThreadWrapper.cs" />
     <Compile Include="FrameworkAbstractions\ISystemIOFileWrapper.cs" />
     <Compile Include="FrameworkAbstractions\SystemIOFileWrapper.cs" />
     <Compile Include="IStorage.cs" />

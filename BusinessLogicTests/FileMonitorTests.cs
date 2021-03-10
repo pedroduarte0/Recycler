@@ -4,6 +4,7 @@ using System.Linq;
 using BusinessLogic;
 using BusinessLogic.FileMonitor;
 using BusinessLogic.FileMonitor.FileDescriptor;
+using BusinessLogic.FrameworkAbstractions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

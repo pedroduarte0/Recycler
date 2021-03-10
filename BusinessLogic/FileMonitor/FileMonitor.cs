@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.FileMonitor.FileDescriptor;
 using System.Collections.Generic;
+using BusinessLogic.FrameworkAbstractions;
 using System.IO;
 
 namespace BusinessLogic.FileMonitor

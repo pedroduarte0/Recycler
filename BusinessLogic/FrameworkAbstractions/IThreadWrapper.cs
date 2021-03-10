@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.FileMonitor
+namespace BusinessLogic.FrameworkAbstractions
 {
     /// <summary>
     /// Abstraction for threading related methods.

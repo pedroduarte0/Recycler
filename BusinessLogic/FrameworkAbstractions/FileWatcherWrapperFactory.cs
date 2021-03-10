@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic.FileMonitor
+﻿namespace BusinessLogic.FrameworkAbstractions
 {
     public class FileWatcherWrapperFactory : IFileWatcherWrapperFactory
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace BusinessLogic.FileMonitor
+namespace BusinessLogic.FrameworkAbstractions
 {
     public interface IFileWatcherWrapper : IDisposable
     {

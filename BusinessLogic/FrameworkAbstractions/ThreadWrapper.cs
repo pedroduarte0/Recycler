@@ -2,8 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-//TODO move to Framework abstractions
-namespace BusinessLogic.FileMonitor
+namespace BusinessLogic.FrameworkAbstractions
 {
     ///<inheritdoc/>
     public class ThreadWrapper : IThreadWrapper
