@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using BusinessLogic.FrameworkAbstractions;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
+using System.Linq;
 
 namespace BusinessLogic.FileMonitor.FileDescriptor
 {
@@ -18,7 +19,8 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
         private const int MonitorPeriod = 2000;
         private readonly IThreadWrapper m_threadWrapper;
         private readonly IFileDescriptorIndexer m_fileDescriptorIndexer;
-        private ConcurrentQueue<ChangeInfo> m_queue = new ConcurrentQueue<ChangeInfo>();
+        private BlockingCollection<ChangeInfo> m_queue = new BlockingCollection<ChangeInfo>();
+        private int m_persistCounter = 0;
 
         public FileDescriptorUpdater(IThreadWrapper threadWrapper, IFileDescriptorIndexer fileDescriptorIndexer)
         {
@@ -33,45 +35,64 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
 
         public void Enqueue(ChangeInfo changeInfo)
         {
-            m_queue.Enqueue(changeInfo);
+            m_queue.Add(changeInfo);
         }
 
         internal void QueueHandler()
         {
             while (true)
             {
-                while (QueueHasItems())
+                try
                 {
-                    if (m_queue.TryDequeue(out ChangeInfo item))
+                    var item = m_queue.Take();
+
+                    switch (item.ChangeInfoType)
                     {
-                        switch (item.ChangeInfoType)
-                        {
-                            case ChangeInfoType.Created:
-                                // TODO: Replace class ChangeInfo with FileDescriptor
-                                var created = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
-                                m_fileDescriptorIndexer.Insert(created);
-                                break;
+                        case ChangeInfoType.Created:
+                            // TODO: Replace class ChangeInfo with FileDescriptor
+                            var created = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
+                            m_fileDescriptorIndexer.Insert(created);
+                            break;
 
-                            case ChangeInfoType.Deleted:
-                                var deleted = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
-                                m_fileDescriptorIndexer.Remove(deleted);
-                                break;
+                        case ChangeInfoType.Deleted:
+                            var deleted = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
+                            m_fileDescriptorIndexer.Remove(deleted);
+                            break;
 
-                            default:
-                                break;
-                        }
-                        Console.WriteLine($"FileDescriptorUpdater: Processed '{item.FullPath}'");
+                        default:
+                            break;
                     }
-                }
+                    Console.WriteLine($"FileDescriptorUpdater: Processed '{item.FullPath}'");
 
-                m_fileDescriptorIndexer.Persist();
-                m_threadWrapper.ThreadSleep(MonitorPeriod);
+                    PeriodicallyPersistIndexer();
+                }
+                catch (InvalidOperationException)
+                {
+                    // Queue is empty and no more items will be added.
+                    break;
+                }
             };
+        }
+
+        private void PeriodicallyPersistIndexer()
+        {
+            m_persistCounter++;
+            if (m_persistCounter == 10)
+            {
+                m_fileDescriptorIndexer.Persist();
+                m_persistCounter++;
+            }
         }
 
         internal bool QueueHasItems()
         {
-            return m_queue.IsEmpty == false;
+            // TODO: Use if needed
+            return m_queue.Any();
+        }
+
+        internal void FinalizeQueue()
+        {
+            m_queue.CompleteAdding();
         }
     }
 }
