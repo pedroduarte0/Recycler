@@ -61,9 +61,10 @@ namespace BusinessLogicTests
 
             var newFileChangeInfo = new ChangeInfo(ChangeInfoType.Created, "filepath", "name");
             sut.Enqueue(newFileChangeInfo);
+            sut.FinalizeQueue();
 
             // Act
-            sut.QueueHandler();
+            sut.QueueHandler();     // Calling it explicitely since thread creating is stubbed.
 
             // Assert
             Mock.Get(fileDescriptorIndexer)
@@ -81,6 +82,7 @@ namespace BusinessLogicTests
 
             var deletedFileChangeInfo = new ChangeInfo(ChangeInfoType.Deleted, "filepath", "name");
             sut.Enqueue(deletedFileChangeInfo);
+            sut.FinalizeQueue();
 
             // Act
             sut.QueueHandler();
