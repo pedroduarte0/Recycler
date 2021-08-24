@@ -120,8 +120,7 @@ namespace BusinessLogicTests
         public void Initialize_SerializationFileDoesntExist_DoNotDeserializeIt()
         {
             // Arrange
-            var fileDoesntExistSystemIOFileWrapper = Mock.Of<ISystemIOFileWrapper>(
-                x => x.Exists(It.IsAny<string>()) == false);
+            var fileDoesntExistSystemIOFileWrapper = GetFileDoesntExistSystemIOFileWrapper();
 
             var mockSerializer = Mock.Of<ISerializer>();
 
@@ -144,8 +143,11 @@ namespace BusinessLogicTests
             // Arrange
             var serializer = new Mock<ISerializer>();
 
+            var fileExistsSystemIOFileWrapper = GetFileExistsSystemIOFileWrapper();
+
             var sut = new IndexerBuilder()
                 .With(serializer.Object)
+                .With(fileExistsSystemIOFileWrapper)
                 .Build();
 
             // Act
@@ -171,8 +173,11 @@ namespace BusinessLogicTests
 
             var storage = new Mock<IStorage>();
 
+            var fileExistsSystemIOFileWrapper = GetFileExistsSystemIOFileWrapper();
+
             var sut = new IndexerBuilder()
                 .With(serializer.Object)
+                .With(fileExistsSystemIOFileWrapper)
                 .Build();
 
             sut.Initialize();
@@ -182,6 +187,18 @@ namespace BusinessLogicTests
 
             // Assert
             Assert.AreEqual(descriptors.FirstOrDefault(), descriptor);
+        }
+
+        private static ISystemIOFileWrapper GetFileExistsSystemIOFileWrapper()
+        {
+            return Mock.Of<ISystemIOFileWrapper>(x =>
+                            x.Exists(It.IsAny<string>()) == true);
+        }
+
+        private static ISystemIOFileWrapper GetFileDoesntExistSystemIOFileWrapper()
+        {
+            return Mock.Of<ISystemIOFileWrapper>(x =>
+                            x.Exists(It.IsAny<string>()) == false);
         }
     }
 
