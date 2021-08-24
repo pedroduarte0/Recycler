@@ -86,7 +86,6 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
 
         internal bool QueueHasItems()
         {
-            // TODO: Use if needed
             return m_queue.Any();
         }
 
