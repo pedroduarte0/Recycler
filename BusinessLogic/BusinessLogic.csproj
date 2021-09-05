@@ -49,14 +49,14 @@
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\ISerializer.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\JsonSerializer.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorUpdater.cs" />
-    <Compile Include="FileMonitor\FileMonitor.cs" />
+    <Compile Include="FileMonitor\FileChangeMonitor.cs" />
     <Compile Include="FrameworkAbstractions\FileWatcherWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="FrameworkAbstractions\FileWatcherWrapperFactory.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\IFileDescriptorIndexer.cs" />
     <Compile Include="FileMonitor\FileDescriptor\IFileDescriptorUpdater.cs" />
-    <Compile Include="FileMonitor\IFileMonitor.cs" />
+    <Compile Include="FileMonitor\IFileChangeMonitor.cs" />
     <Compile Include="FrameworkAbstractions\IFileWatcherWrapper.cs" />
     <Compile Include="FrameworkAbstractions\IFileWatcherWrapperFactory.cs" />
     <Compile Include="FrameworkAbstractions\IThreadWrapper.cs" />

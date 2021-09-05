@@ -35,7 +35,7 @@ namespace Recycler
 
             IFileDescriptorUpdater descriptorUpdater = new FileDescriptorUpdater(threadWrapper, descriptorIndexer);
 
-            IFileMonitor fileMonitor = new FileMonitor(
+            IFileChangeMonitor fileMonitor = new FileChangeMonitor(
                 storage,
                 fileWatcherWrapperFactory,
                 descriptorUpdater);

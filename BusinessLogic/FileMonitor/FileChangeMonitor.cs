@@ -5,7 +5,7 @@ using System.IO;
 
 namespace BusinessLogic.FileMonitor
 {
-    public class FileMonitor : IFileMonitor
+    public class FileChangeMonitor : IFileChangeMonitor
     {
         private List<string> m_monitoredFolders;
         private readonly IStorage m_storage;
@@ -13,7 +13,7 @@ namespace BusinessLogic.FileMonitor
         private readonly IFileDescriptorUpdater m_descriptorUpdater;
         internal readonly Dictionary<string, IFileWatcherWrapper> m_fileWatcherWrappers;    // TODO: Confirm instances are being disposed.
 
-        public FileMonitor(IStorage storage, IFileWatcherWrapperFactory factory, IFileDescriptorUpdater descriptorUpdater)
+        public FileChangeMonitor(IStorage storage, IFileWatcherWrapperFactory factory, IFileDescriptorUpdater descriptorUpdater)
         {
             m_monitoredFolders = new List<string>();
             m_fileWatcherWrappers = new Dictionary<string, IFileWatcherWrapper>();

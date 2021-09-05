@@ -12,7 +12,7 @@ using Moq;
 namespace BusinessLogicTests
 {
     [TestClass]
-    public class FileMonitorTests
+    public class FileChangeMonitorTests
     {
         [TestMethod]
         public void AddFolderForMonitoring_FolderPath_PathIsRemembered()
@@ -322,9 +322,9 @@ namespace BusinessLogicTests
             return this;
         }
 
-        public FileMonitor Build()
+        public FileChangeMonitor Build()
         {
-            return new FileMonitor(m_storage, m_fileWatcherWrapperFactory, m_descriptorUpdater);
+            return new FileChangeMonitor(m_storage, m_fileWatcherWrapperFactory, m_descriptorUpdater);
         }
     }
 }

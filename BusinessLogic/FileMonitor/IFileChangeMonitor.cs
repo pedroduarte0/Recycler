@@ -4,7 +4,7 @@
 
 namespace BusinessLogic
 {
-    public interface IFileMonitor
+    public interface IFileChangeMonitor
     {
         void AddFolderForMonitoring(string path);
 
