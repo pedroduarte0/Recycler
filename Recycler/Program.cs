@@ -26,7 +26,7 @@ namespace Recycler
             IStorage storage = new TestStorage();
             IThreadWrapper threadWrapper = new ThreadWrapper();
 
-            IFileWatcherWrapperFactory fileWatcherWrapperFactory = new FileWatcherWrapperFactory();
+            IFileWatcherWrapperFactory watcherFactory = new FileWatcherWrapperFactory();
 
             IFileDescriptorIndexer descriptorIndexer = new PlainTextFileDescriptorIndexer(
                 new JsonSerializer(systemIOFile),
@@ -37,7 +37,7 @@ namespace Recycler
 
             IFileChangeMonitor fileMonitor = new FileChangeMonitor(
                 storage,
-                fileWatcherWrapperFactory,
+                watcherFactory,
                 descriptorUpdater);
 
             fileMonitor.AddFolderForMonitoring("C:\\temp");
