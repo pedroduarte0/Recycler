@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Concurrent;
 using BusinessLogic.FrameworkAbstractions;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
@@ -62,7 +63,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
                         default:
                             break;
                     }
-                    Console.WriteLine($"FileDescriptorUpdater: Processed '{item.FullPath}'");
+                    Debug.WriteLine($"FileDescriptorUpdater: Processed '{item.FullPath}'");
 
                     PeriodicallyPersistIndexer();
                 }
@@ -80,7 +81,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
             if (m_persistCounter == 10)
             {
                 m_fileDescriptorIndexer.Persist();
-                m_persistCounter++;
+                m_persistCounter = 0;
             }
         }
 
