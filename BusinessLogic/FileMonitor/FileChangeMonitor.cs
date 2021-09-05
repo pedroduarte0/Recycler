@@ -1,4 +1,5 @@
-﻿using BusinessLogic.FileMonitor.FileDescriptor;
+﻿using System.Diagnostics;
+using BusinessLogic.FileMonitor.FileDescriptor;
 using System.Collections.Generic;
 using BusinessLogic.FrameworkAbstractions;
 using System.IO;
@@ -70,6 +71,8 @@ namespace BusinessLogic.FileMonitor
 
         private void OnFileWatcherEvent(object sender, FileSystemEventArgs e)
         {
+            Debug.WriteLine($"FileSystemEventArgs: {e.Name}, {e.ChangeType}");
+
             var changeInfoType = ChangeInfoType.Created;
 
             switch (e.ChangeType)
