@@ -28,9 +28,9 @@ namespace BusinessLogic.FileMonitor
 
             if (m_fileWatcherWrappers.ContainsKey(path) == false)
             {
-                var fileWatcherWrapper = m_fileWatcherWrapperFactory.Create();
-                Setup(fileWatcherWrapper, path);
-                m_fileWatcherWrappers[path] = fileWatcherWrapper;
+                var watcher = m_fileWatcherWrapperFactory.Create();
+                SetupFileWatcher(watcher, path);
+                m_fileWatcherWrappers[path] = watcher;
             }
         }
 
@@ -49,12 +49,12 @@ namespace BusinessLogic.FileMonitor
             }
         }
 
-        public void PersistFolders()
+        public void PersistFoldersList()
         {
             m_storage.Save(m_monitoredFolders, "monitoresFoldersList.txt");
         }
 
-        private void Setup(IFileWatcherWrapper fileWatcherWrapper, string path)
+        private void SetupFileWatcher(IFileWatcherWrapper fileWatcherWrapper, string path)
         {
             fileWatcherWrapper.Path = path;
 

@@ -247,7 +247,7 @@ namespace BusinessLogicTests
             fileMonitor.AddFolderForMonitoring(path2);
 
             // Act
-            fileMonitor.PersistFolders();
+            fileMonitor.PersistFoldersList();
 
             // Assert
             Mock.Get(storage)

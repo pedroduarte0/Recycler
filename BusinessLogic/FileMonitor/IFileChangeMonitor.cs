@@ -10,6 +10,6 @@ namespace BusinessLogic
 
         void RemoveFolderForMonitoring(string path);
 
-        void PersistFolders();
+        void PersistFoldersList();
     }
 }
