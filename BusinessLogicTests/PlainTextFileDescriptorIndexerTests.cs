@@ -94,7 +94,7 @@ namespace BusinessLogicTests
             // Arrange
             const string serializationResult = "json string";
 
-            var serializer = new Mock<ISerializer<Dictionary<string, FileDescriptor>>>();
+            var serializer = GetSerializerMock();
             serializer.Setup(x => x.Serialize(It.IsAny<Dictionary<string, FileDescriptor>>()))
                 .Returns(serializationResult);
 
@@ -141,7 +141,7 @@ namespace BusinessLogicTests
         public void Initialize_WhenCalled_DeserializesIndex()
         {
             // Arrange
-            var serializer = new Mock<ISerializer<Dictionary<string, FileDescriptor>>>();
+            var serializer = GetSerializerMock();
 
             var fileExistsSystemIOFileWrapper = GetFileExistsSystemIOFileWrapper();
 
@@ -167,7 +167,7 @@ namespace BusinessLogicTests
                 ["a key"] = descriptor
             };
 
-            var serializer = new Mock<ISerializer<Dictionary<string, FileDescriptor>>>();
+            var serializer = GetSerializerMock();
             serializer.Setup(x => x.Deserialize(It.IsAny<string>()))
                 .Returns(index);
 
@@ -187,6 +187,11 @@ namespace BusinessLogicTests
 
             // Assert
             Assert.AreEqual(descriptors.FirstOrDefault(), descriptor);
+        }
+
+        private static Mock<ISerializer<Dictionary<string, FileDescriptor>>> GetSerializerMock()
+        {
+            return new Mock<ISerializer<Dictionary<string, FileDescriptor>>>();
         }
 
         private static ISystemIOFileWrapper GetFileExistsSystemIOFileWrapper()
