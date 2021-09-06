@@ -58,7 +58,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         private string GetKey(FileDescriptor descriptor)
         {
-            return Path.Combine(descriptor.FullPath, descriptor.Name);
+            return descriptor.FullPath;
         }
     }
 }
