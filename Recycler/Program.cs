@@ -29,7 +29,7 @@ namespace Recycler
             IFileWatcherWrapperFactory watcherFactory = new FileWatcherWrapperFactory();
 
             IFileDescriptorIndexer descriptorIndexer = new PlainTextFileDescriptorIndexer(
-                new JsonSerializer(systemIOFile),
+                new JsonSerializer<Dictionary<string, FileDescriptor>>(systemIOFile),       // will be prettier once using IoC framework
                 storage,
                 systemIOFile);
 
