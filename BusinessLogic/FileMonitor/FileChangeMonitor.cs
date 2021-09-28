@@ -66,6 +66,7 @@ namespace BusinessLogic.FileMonitor
             fileWatcherWrapper.Created += new FileSystemEventHandler(OnFileWatcherEvent);
             fileWatcherWrapper.Changed += new FileSystemEventHandler(OnFileWatcherEvent);
             fileWatcherWrapper.Deleted += new FileSystemEventHandler(OnFileWatcherEvent);
+            // TODO: Rename: example .Renamed += new RenamedEventHandler(OnRenamed);
             fileWatcherWrapper.EnableRaisingEvents = true;
         }
 
@@ -85,6 +86,7 @@ namespace BusinessLogic.FileMonitor
                     break;
                 case WatcherChangeTypes.Changed:
                     // TODO: should reset age?
+                    changeInfoType = ChangeInfoType.Changed;
                     break;
                 case WatcherChangeTypes.Renamed:
                     // TODO: What to do?

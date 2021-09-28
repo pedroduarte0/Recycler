@@ -6,6 +6,7 @@ using BusinessLogic.FrameworkAbstractions;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Unity;
 
 namespace Recycler
 {
@@ -20,22 +21,11 @@ namespace Recycler
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Framework dependencies
-            var systemIOFile = new SystemIOFileWrapper();
+            var storage = Ioc.Container.Resolve<IStorage>();
+            var watcherFactory = Ioc.Container.Resolve<IFileWatcherWrapperFactory>();
+            var descriptorUpdater = Ioc.Container.Resolve<IFileDescriptorUpdater>();
 
-            IStorage storage = new TestStorage();
-            IThreadWrapper threadWrapper = new ThreadWrapper();
-
-            IFileWatcherWrapperFactory watcherFactory = new FileWatcherWrapperFactory();
-
-            IFileDescriptorIndexer descriptorIndexer = new PlainTextFileDescriptorIndexer(
-                new JsonSerializer<Dictionary<string, FileDescriptor>>(systemIOFile),       // will be prettier once using IoC framework
-                storage,
-                systemIOFile);
-
-            IFileDescriptorUpdater descriptorUpdater = new FileDescriptorUpdater(threadWrapper, descriptorIndexer);
-
-            IFileChangeMonitor fileMonitor = new FileChangeMonitor(
+         var fileMonitor = new FileChangeMonitor(
                 storage,
                 watcherFactory,
                 descriptorUpdater);
