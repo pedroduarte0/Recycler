@@ -94,8 +94,8 @@ namespace BusinessLogicTests
             // Arrange
             const string serializationResult = "json string";
 
-            var serializer = new Mock<ISerializer>();
-            serializer.Setup(x => x.Serialize(It.IsAny<object>()))
+            var serializer = GetSerializerMock();
+            serializer.Setup(x => x.Serialize(It.IsAny<Dictionary<string, FileDescriptor>>()))
                 .Returns(serializationResult);
 
             var storage = new Mock<IStorage>();
@@ -112,7 +112,7 @@ namespace BusinessLogicTests
             sut.Persist();
 
             // Assert
-            serializer.Verify(x => x.Serialize(It.IsAny<object>()), Times.Once);
+            serializer.Verify(x => x.Serialize(It.IsAny<Dictionary<string, FileDescriptor>>()), Times.Once);
             storage.Verify(x => x.Save(serializationResult, It.IsAny<string>()), Times.Once);
         }
 
@@ -122,7 +122,7 @@ namespace BusinessLogicTests
             // Arrange
             var fileDoesntExistSystemIOFileWrapper = GetFileDoesntExistSystemIOFileWrapper();
 
-            var mockSerializer = Mock.Of<ISerializer>();
+            var mockSerializer = Mock.Of<ISerializer<Dictionary<string, FileDescriptor>>>();
 
             var sut = new IndexerBuilder()
                .With(fileDoesntExistSystemIOFileWrapper)
@@ -141,7 +141,7 @@ namespace BusinessLogicTests
         public void Initialize_WhenCalled_DeserializesIndex()
         {
             // Arrange
-            var serializer = new Mock<ISerializer>();
+            var serializer = GetSerializerMock();
 
             var fileExistsSystemIOFileWrapper = GetFileExistsSystemIOFileWrapper();
 
@@ -167,7 +167,7 @@ namespace BusinessLogicTests
                 ["a key"] = descriptor
             };
 
-            var serializer = new Mock<ISerializer>();
+            var serializer = GetSerializerMock();
             serializer.Setup(x => x.Deserialize(It.IsAny<string>()))
                 .Returns(index);
 
@@ -189,6 +189,11 @@ namespace BusinessLogicTests
             Assert.AreEqual(descriptors.FirstOrDefault(), descriptor);
         }
 
+        private static Mock<ISerializer<Dictionary<string, FileDescriptor>>> GetSerializerMock()
+        {
+            return new Mock<ISerializer<Dictionary<string, FileDescriptor>>>();
+        }
+
         private static ISystemIOFileWrapper GetFileExistsSystemIOFileWrapper()
         {
             return Mock.Of<ISystemIOFileWrapper>(x =>
@@ -205,17 +210,17 @@ namespace BusinessLogicTests
     internal class IndexerBuilder
     {
         private IStorage m_storage;
-        private ISerializer m_serializer;
+        private ISerializer<Dictionary<string, FileDescriptor>> m_serializer;
         private ISystemIOFileWrapper m_systemIOFile;
 
         public IndexerBuilder()
         {
             m_storage = Mock.Of<IStorage>();
-            m_serializer = Mock.Of<ISerializer>();
+            m_serializer = Mock.Of<ISerializer<Dictionary<string, FileDescriptor>>>();
             m_systemIOFile = Mock.Of<ISystemIOFileWrapper>();
         }
 
-        public IndexerBuilder With(ISerializer serializer)
+        public IndexerBuilder With(ISerializer<Dictionary<string, FileDescriptor>> serializer)
         {
             m_serializer = serializer;
             return this;

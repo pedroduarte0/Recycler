@@ -1,8 +1,9 @@
 ﻿namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
-    public interface ISerializer
+    public interface ISerializer<T>
     {
-        string Serialize(object objectToSerialize);
-        object Deserialize(string path);
+        string Serialize(T objectToSerialize);
+
+        T Deserialize(string path);
     }
 }

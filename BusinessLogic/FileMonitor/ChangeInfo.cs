@@ -18,6 +18,7 @@
     public enum ChangeInfoType
     {
         Created,
-        Deleted
+        Changed,
+        Deleted,
     }
 }

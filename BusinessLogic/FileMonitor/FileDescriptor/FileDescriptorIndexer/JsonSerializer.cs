@@ -6,7 +6,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
     /// <summary>
     /// Tests for JsonSerializer are done in 3rd party library tests (example: result = serialize(o), assert o == deserialize(result))
     /// </summary>
-    public class JsonSerializer : ISerializer
+    public class JsonSerializer<T> : ISerializer<T>
     {
         private readonly ISystemIOFileWrapper m_systemIOFile;
 
@@ -15,15 +15,15 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
             m_systemIOFile = systemIOFile;
         }
 
-        public string Serialize(object objectToSerialize)
+        public string Serialize(T objectToSerialize)
         {
             return JsonConvert.SerializeObject(objectToSerialize);
         }
 
-        public object Deserialize(string path)
+        public T Deserialize(string path)
         {
             string text = m_systemIOFile.ReadAllText(path);
-            return JsonConvert.DeserializeObject(text);
+            return (T)JsonConvert.DeserializeObject(text);
         }
     }
 }

@@ -60,6 +60,10 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
                             m_fileDescriptorIndexer.Remove(deleted);
                             break;
 
+                        case ChangeInfoType.Changed:
+                            // TODO: should reset age?
+                            break;
+
                         default:
                             break;
                     }

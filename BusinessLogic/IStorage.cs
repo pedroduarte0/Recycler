@@ -11,7 +11,7 @@ namespace BusinessLogic
         void Save(List<string> strings, string filePath);
 
         /// <summary>
-        /// Persists a strings into a file.
+        /// Persists a string into a file.
         /// </summary>
         /// <param name="singleToSave"></param>
         /// <param name="filePath"></param>
