@@ -23,9 +23,6 @@ namespace Recycler
             m_container.RegisterType<ISystemIOFileWrapper, SystemIOFileWrapper>(
                 TypeLifetime.Singleton);
 
-            m_container.RegisterType<IStorage, TestStorage>(
-                TypeLifetime.Singleton);
-
             m_container.RegisterType<IThreadWrapper, ThreadWrapper>(
                 TypeLifetime.Singleton);
 
