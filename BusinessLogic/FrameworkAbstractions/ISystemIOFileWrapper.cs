@@ -64,5 +64,47 @@ namespace BusinessLogic.FrameworkAbstractions
         //     returns false regardless of the existence of path.
         [SecuritySafeCritical]
         bool Exists(string path);
+
+        //
+        // Summary:
+        //     Creates a new file, writes the specified string to the file, and then closes
+        //     the file. If the target file already exists, it is overwritten.
+        //
+        // Parameters:
+        //   path:
+        //     The file to write to.
+        //
+        //   contents:
+        //     The string to write to the file.
+        //
+        // Exceptions:
+        //   T:System.ArgumentException:
+        //     path is a zero-length string, contains only white space, or contains one or more
+        //     invalid characters as defined by System.IO.Path.InvalidPathChars.
+        //
+        //   T:System.ArgumentNullException:
+        //     path is null or contents is empty.
+        //
+        //   T:System.IO.PathTooLongException:
+        //     The specified path, file name, or both exceed the system-defined maximum length.
+        //
+        //   T:System.IO.DirectoryNotFoundException:
+        //     The specified path is invalid (for example, it is on an unmapped drive).
+        //
+        //   T:System.IO.IOException:
+        //     An I/O error occurred while opening the file.
+        //
+        //   T:System.UnauthorizedAccessException:
+        //     path specified a file that is read-only. -or- This operation is not supported
+        //     on the current platform. -or- path specified a directory. -or- The caller does
+        //     not have the required permission.
+        //
+        //   T:System.NotSupportedException:
+        //     path is in an invalid format.
+        //
+        //   T:System.Security.SecurityException:
+        //     The caller does not have the required permission.
+        [SecuritySafeCritical]
+        void WriteAllText(string path, string contents);
     }
 }
