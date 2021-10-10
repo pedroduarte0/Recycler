@@ -1,10 +1,8 @@
 ﻿using BusinessLogic;
 using BusinessLogic.FileMonitor;
 using BusinessLogic.FileMonitor.FileDescriptor;
-using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
 using BusinessLogic.FrameworkAbstractions;
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using Unity;
 
@@ -36,17 +34,6 @@ namespace Recycler
             {
                 System.Threading.Thread.Sleep(1000);
             }
-        }
-    }
-
-    public class TestStorage : BusinessLogic.IStorage
-    {
-        public void Save(List<string> strings, string filePath)
-        {
-        }
-
-        public void Save(string singleToSave, string filePath)
-        {
         }
     }
 }
