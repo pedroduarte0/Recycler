@@ -13,7 +13,12 @@ namespace BusinessLogic
             m_systemIoFileWrapper = wrapper;
         }
 
-        public void Save(ICollection<string> strings, string filePath)
+        public string Load(string source)
+        {
+            return m_systemIoFileWrapper.ReadAllText(source);
+        }
+
+        public void Save(ICollection<string> strings, string destination)
         {
             var sb = new StringBuilder();
             foreach (string item in strings)
@@ -21,12 +26,12 @@ namespace BusinessLogic
                 sb.AppendLine(item);
             }
 
-            m_systemIoFileWrapper.WriteAllText(filePath, sb.ToString());
+            m_systemIoFileWrapper.WriteAllText(destination, sb.ToString());
         }
 
-        public void Save(string singleToSave, string filePath)
+        public void Save(string singleToSave, string destination)
         {
-            m_systemIoFileWrapper.WriteAllText(filePath, singleToSave);
+            m_systemIoFileWrapper.WriteAllText(destination, singleToSave);
         }
     }
 }

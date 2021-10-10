@@ -17,7 +17,7 @@ namespace BusinessLogicTests
         {
             // Arrange
             var collectionWithOneString = new List<string> { "singleString" };
-            string path = "aPath";
+            string path = "aFilePath";
 
             var wrapperMock = Mock.Of<ISystemIOFileWrapper>();
             
@@ -36,7 +36,7 @@ namespace BusinessLogicTests
         {
             // Arrange
             var strings = new List<string> { "oneString", "anotherString" };
-            string path = "aPath";
+            string path = "aFilePath";
 
             var wrapperMock = Mock.Of<ISystemIOFileWrapper>();
 
@@ -63,7 +63,7 @@ namespace BusinessLogicTests
         {
             // Arrange
             string oneString = "singleString";
-            string path = "aPath";
+            string path = "aFilePath";
 
             var wrapperMock = Mock.Of<ISystemIOFileWrapper>();
 
@@ -75,6 +75,24 @@ namespace BusinessLogicTests
             // Assert
             Mock.Get(wrapperMock)
                 .Verify(x => x.WriteAllText(path, oneString), Times.Once);
+        }
+
+        [TestMethod]
+        public void Load_SourcePath_LoadsTheString()
+        {
+            // Arrange
+            string path = "aFilePath";
+
+            var wrapperMock = Mock.Of<ISystemIOFileWrapper>();
+
+            var sot = new FileStorage(wrapperMock);
+
+            // Act
+            sot.Load(path);
+
+            // Assert
+            Mock.Get(wrapperMock)
+                .Verify(x => x.ReadAllText(path), Times.Once);
         }
     }
 }
