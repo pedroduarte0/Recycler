@@ -8,7 +8,7 @@ namespace BusinessLogic
         /// Persists a collection of strings into a single file.
         /// </summary>
         /// <param name="strings"></param>
-        void Save(List<string> strings, string filePath);
+        void Save(ICollection<string> strings, string filePath);
 
         /// <summary>
         /// Persists a string into a file.

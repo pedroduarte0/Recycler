@@ -44,7 +44,7 @@ namespace Recycler
 
         public class DummyStorage : IStorage
         {
-            public void Save(List<string> strings, string filePath)
+            public void Save(ICollection<string> strings, string filePath)
             {
             }
 
