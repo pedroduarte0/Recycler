@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="FileDescriptorUpdaterTests.cs" />
     <Compile Include="FileChangeMonitorTests.cs" />
+    <Compile Include="FileStorageTests.cs" />
     <Compile Include="PlainTextFileDescriptorIndexerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

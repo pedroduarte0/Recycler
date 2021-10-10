@@ -50,6 +50,7 @@
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\JsonSerializer.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorUpdater.cs" />
     <Compile Include="FileMonitor\FileChangeMonitor.cs" />
+    <Compile Include="FileStorage.cs" />
     <Compile Include="FrameworkAbstractions\FileWatcherWrapper.cs">
       <SubType>Component</SubType>
     </Compile>

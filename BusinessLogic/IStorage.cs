@@ -5,16 +5,23 @@ namespace BusinessLogic
     public interface IStorage
     {
         /// <summary>
-        /// Persists a collection of strings into a single file.
+        /// Persists a collection of strings into the destination location.
         /// </summary>
         /// <param name="strings"></param>
-        void Save(List<string> strings, string filePath);
+        void Save(ICollection<string> strings, string destination);
 
         /// <summary>
-        /// Persists a string into a file.
+        /// Persists a string into the destination location.
         /// </summary>
         /// <param name="singleToSave"></param>
         /// <param name="filePath"></param>
-        void Save(string singleToSave, string filePath);
+        void Save(string singleToSave, string destination);
+
+        /// <summary>
+        /// Loads a string from the source location.
+        /// </summary>
+        /// <param name="source">The location where to load.</param>
+        /// <returns>The obtained string.</returns>
+        string Load(string source);
     }
 }
