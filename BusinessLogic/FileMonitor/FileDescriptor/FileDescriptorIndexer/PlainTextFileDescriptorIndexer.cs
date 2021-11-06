@@ -26,7 +26,9 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
         {
             if (m_systemIOFile.Exists(m_indexPath))
             {
-                m_descriptors = m_serializer.Deserialize(m_indexPath);
+                string serialized = m_systemIOFile.ReadAllText(m_indexPath);
+
+                m_descriptors = m_serializer.Deserialize(serialized);
             }
         }
 
