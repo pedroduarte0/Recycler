@@ -52,7 +52,7 @@ namespace BusinessLogic.FileMonitor
 
         public void PersistFoldersList()
         {
-            m_storage.Save(m_monitoredFolders, "monitoredFoldersList.txt");
+            m_storage.SaveStrings(m_monitoredFolders, "monitoredFoldersList.txt");
         }
 
         private void SetupFileWatcher(IFileWatcherWrapper fileWatcherWrapper, string path)

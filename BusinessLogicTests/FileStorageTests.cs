@@ -24,7 +24,7 @@ namespace BusinessLogicTests
             var sot = new FileStorage(wrapperMock);
 
             // Act
-            sot.Save(collectionWithOneString, path);
+            sot.SaveStrings(collectionWithOneString, path);
 
             // Assert
             Mock.Get(wrapperMock)
@@ -51,7 +51,7 @@ namespace BusinessLogicTests
             string expectedLines = sb.ToString();
 
             // Act
-            sot.Save(strings, path);
+            sot.SaveStrings(strings, path);
 
             // Assert
             Mock.Get(wrapperMock)
@@ -70,7 +70,7 @@ namespace BusinessLogicTests
             var sot = new FileStorage(wrapperMock);
 
             // Act
-            sot.Save(oneString, path);
+            sot.SaveString(oneString, path);
 
             // Assert
             Mock.Get(wrapperMock)
@@ -88,7 +88,7 @@ namespace BusinessLogicTests
             var sot = new FileStorage(wrapperMock);
 
             // Act
-            sot.Load(path);
+            sot.LoadString(path);
 
             // Assert
             Mock.Get(wrapperMock)

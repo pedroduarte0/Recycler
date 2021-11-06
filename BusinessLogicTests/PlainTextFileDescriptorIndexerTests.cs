@@ -113,7 +113,7 @@ namespace BusinessLogicTests
 
             // Assert
             serializer.Verify(x => x.Serialize(It.IsAny<Dictionary<string, FileDescriptor>>()), Times.Once);
-            storage.Verify(x => x.Save(serializationResult, It.IsAny<string>()), Times.Once);
+            storage.Verify(x => x.SaveString(serializationResult, It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod]

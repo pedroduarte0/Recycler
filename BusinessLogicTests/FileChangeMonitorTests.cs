@@ -251,7 +251,7 @@ namespace BusinessLogicTests
 
             // Assert
             Mock.Get(storage)
-                .Verify(x => x.Save(It.IsAny<List<string>>(), It.IsAny<string>()));
+                .Verify(x => x.SaveStrings(It.IsAny<List<string>>(), It.IsAny<string>()));
         }
 
         [TestMethod]

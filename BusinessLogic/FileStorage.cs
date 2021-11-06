@@ -13,12 +13,12 @@ namespace BusinessLogic
             m_systemIoFileWrapper = wrapper;
         }
 
-        public string Load(string source)
+        public string LoadString(string source)
         {
             return m_systemIoFileWrapper.ReadAllText(source);
         }
 
-        public void Save(ICollection<string> strings, string destination)
+        public void SaveStrings(ICollection<string> strings, string destination)
         {
             var sb = new StringBuilder();
             foreach (string item in strings)
@@ -29,7 +29,7 @@ namespace BusinessLogic
             m_systemIoFileWrapper.WriteAllText(destination, sb.ToString());
         }
 
-        public void Save(string singleToSave, string destination)
+        public void SaveString(string singleToSave, string destination)
         {
             m_systemIoFileWrapper.WriteAllText(destination, singleToSave);
         }
