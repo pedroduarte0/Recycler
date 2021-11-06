@@ -44,9 +44,11 @@ namespace Recycler
 
         public class DummyStorage : IStorage
         {
+            private SystemIOFileWrapper systemIOFile = new SystemIOFileWrapper();
+
             public string Load(string source)
             {
-                return string.Empty;
+                return systemIOFile.ReadAllText(source);
             }
 
             public void Save(ICollection<string> strings, string filePath)
@@ -55,6 +57,7 @@ namespace Recycler
 
             public void Save(string singleToSave, string filePath)
             {
+                systemIOFile.WriteAllText(filePath, singleToSave);
             }
         }
     }
