@@ -1,6 +1,5 @@
 # Recycler
-The idea to create Recycler came out of the realization that my Download folder tends to accumulate with an ever growing number of files and 99% of the times they are totally useless.
-You can of course just delete the Download folder yourself manually periodically, but I thought this would give a nice project to develop using test-driven development (TDD).
+The idea to create Recycler came out of the realization that my Download folder tends to accumulate with an ever growing number of files and vast majority of the times they are totally useless. You can of course just delete the Download folder yourself manually periodically (Or use a linux script ;) ), but I thought this would give a nice project to develop using test-driven development (TDD).
 
 Recyler monitors previously selected folders and deletes files that go over a specified 'age'.
 
