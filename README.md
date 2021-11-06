@@ -3,7 +3,7 @@ The idea to create Recycler came out of the realization that my Download folder 
 
 Recyler monitors previously selected folders and deletes files that go over a specified 'age'.
 
-The concept of 'age' is not related to the date of the file itself, but it means the time interval since a file was first detected by Recycler and the time that has passed so far.
+The concept of 'age' is not related to the date of the file itself, but meaning the time interval since a file was first detected by Recycler and the time that has passed so far.
 
 As of the moment it is developed in C# using Visual Studio but the end goal is to become multi-platform (supporting Linux and MS Windows).
 
