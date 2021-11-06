@@ -171,8 +171,6 @@ namespace BusinessLogicTests
             serializer.Setup(x => x.Deserialize(It.IsAny<string>()))
                 .Returns(index);
 
-            var storage = new Mock<IStorage>();
-
             var fileExistsSystemIOFileWrapper = GetFileExistsSystemIOFileWrapper();
 
             var sut = new IndexerBuilder()
