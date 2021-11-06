@@ -44,6 +44,11 @@ namespace Recycler
 
         public class DummyStorage : IStorage
         {
+            public string Load(string source)
+            {
+                return string.Empty;
+            }
+
             public void Save(ICollection<string> strings, string filePath)
             {
             }
