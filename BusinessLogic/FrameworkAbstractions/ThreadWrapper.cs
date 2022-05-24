@@ -11,10 +11,5 @@ namespace BusinessLogic.FrameworkAbstractions
         {
             return Task.Factory.StartNew(action);
         }
-
-        public void ThreadSleep(int millisecondsTimeout)
-        {
-            Thread.Sleep(millisecondsTimeout);
-        }
     }
 }

@@ -9,6 +9,5 @@ namespace BusinessLogic.FrameworkAbstractions
     public interface IThreadWrapper
     {
         Task TaskFactoryStartNew(Action action);
-        void ThreadSleep(int millisecondsTimeout);
     }
 }
