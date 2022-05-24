@@ -283,7 +283,7 @@ namespace BusinessLogicTests
 
             // Assert
             Mock.Get(descriptorUpdater).
-                Verify(x => x.Enqueue(It.Is<ChangeInfo>(c => c.FullPath ==
+                Verify(x => x.Enqueue(It.Is<FileDescriptor>(c => c.FullPath ==
                 Path.Combine(path, createdFileName))),
                 Times.Once);
         }

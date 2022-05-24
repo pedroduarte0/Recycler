@@ -2,6 +2,6 @@
 {
     public interface IFileDescriptorUpdater
     {
-        void Enqueue(ChangeInfo changeInfo);
+        void Enqueue(FileDescriptor fileDescriptor);
     }
 }

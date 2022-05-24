@@ -8,19 +8,18 @@ using System.Linq;
 namespace BusinessLogic.FileMonitor.FileDescriptor
 {
     /// <summary>
-    /// Handles a created ChangeInfo and
-    ///     - If the file change is 'new file' -> create a FileDescriptor
-    ///     - If the file change is 'deleted file' -> remove its FileDescriptor
-    ///     
-    /// Holds a queue of ChangeInfo. A created ChangeInfo is enqueued by FileMonitor and processed here.
-    /// Uses an instance of a FileDescriptor indexer.
+    /// Handles a created changed file object (<see cref="FileDescriptor"/>) and index it.
     /// </summary>
+    /// <remarks>
+    /// Holds a queue of <see cref="FileDescriptor"/>. A created <see cref="FileDescriptor"/> is enqueued by <see cref="FileDescriptor"/> and processed here.
+    /// Uses an instance of a <see cref="FileDescriptorIndexer"/>.
+    /// </remarks>
     public class FileDescriptorUpdater : IFileDescriptorUpdater
     {
         private const int MonitorPeriod = 2000;
         private readonly IThreadWrapper m_threadWrapper;
         private readonly IFileDescriptorIndexer m_fileDescriptorIndexer;
-        private BlockingCollection<ChangeInfo> m_queue = new BlockingCollection<ChangeInfo>();
+        private BlockingCollection<FileDescriptor> m_queue = new BlockingCollection<FileDescriptor>();
         private int m_persistCounter = 0;
 
         public FileDescriptorUpdater(IThreadWrapper threadWrapper, IFileDescriptorIndexer fileDescriptorIndexer)
@@ -28,15 +27,15 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
             m_threadWrapper = threadWrapper;
             m_fileDescriptorIndexer = fileDescriptorIndexer;
 
-            // TODO: Move following calls to a FileDescriptorUpdater.Initialize()
             m_fileDescriptorIndexer.Initialize();
+
             // See also ThreadStart(https://www.geeksforgeeks.org/how-to-create-threads-in-c-sharp/
             m_threadWrapper.TaskFactoryStartNew(QueueHandler);
         }
 
-        public void Enqueue(ChangeInfo changeInfo)
+        public void Enqueue(FileDescriptor fileDescriptor)
         {
-            m_queue.Add(changeInfo);
+            m_queue.Add(fileDescriptor);
         }
 
         internal void QueueHandler()
@@ -50,9 +49,8 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
                     switch (item.ChangeInfoType)
                     {
                         case ChangeInfoType.Created:
-                            // TODO: Replace class ChangeInfo with FileDescriptor
                             var created = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
-                            m_fileDescriptorIndexer.Insert(created);
+                            m_fileDescriptorIndexer.Insert(item);
                             break;
 
                         case ChangeInfoType.Deleted:
@@ -79,6 +77,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
             };
         }
 
+        // Will be obsolete when using with database storage.
         private void PeriodicallyPersistIndexer()
         {
             m_persistCounter++;

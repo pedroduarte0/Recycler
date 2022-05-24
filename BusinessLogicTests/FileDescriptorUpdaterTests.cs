@@ -43,7 +43,7 @@ namespace BusinessLogicTests
             // Arrange
             var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), Mock.Of<IFileDescriptorIndexer>());
 
-            var item = new ChangeInfo(ChangeInfoType.Created, "filepath", "name");
+            var item = new FileDescriptor(ChangeInfoType.Created, "filepath", "name");
 
             // Act
             sut.Enqueue(item);
@@ -59,7 +59,7 @@ namespace BusinessLogicTests
             var fileDescriptorIndexer = Mock.Of<IFileDescriptorIndexer>();
             var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), fileDescriptorIndexer);
 
-            var newFileChangeInfo = new ChangeInfo(ChangeInfoType.Created, "filepath", "name");
+            var newFileChangeInfo = new FileDescriptor(ChangeInfoType.Created, "filepath", "name");
             sut.Enqueue(newFileChangeInfo);
             sut.FinalizeQueue();
 
@@ -80,7 +80,7 @@ namespace BusinessLogicTests
             var fileDescriptorIndexer = Mock.Of<IFileDescriptorIndexer>();
             var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), fileDescriptorIndexer);
 
-            var deletedFileChangeInfo = new ChangeInfo(ChangeInfoType.Deleted, "filepath", "name");
+            var deletedFileChangeInfo = new FileDescriptor(ChangeInfoType.Deleted, "filepath", "name");
             sut.Enqueue(deletedFileChangeInfo);
             sut.FinalizeQueue();
 

@@ -98,9 +98,9 @@ namespace BusinessLogic.FileMonitor
                     break;
             }
 
-            var changeInfo = new ChangeInfo(changeInfoType, e.FullPath, e.Name);
+            var fileDescriptor = new FileDescriptor.FileDescriptor(changeInfoType, e.FullPath, e.Name);
 
-            m_descriptorUpdater.Enqueue(changeInfo);
+            m_descriptorUpdater.Enqueue(fileDescriptor);
         }
 
         internal IList<string> GetMonitoredFolderPath()

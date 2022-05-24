@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileMonitor\ChangeInfo.cs" />
+    <Compile Include="FileMonitor\ChangeInfoType.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptor.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\ISerializer.cs" />
     <Compile Include="FileMonitor\FileDescriptor\FileDescriptorIndexer\JsonSerializer.cs" />
