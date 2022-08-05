@@ -27,7 +27,7 @@ namespace BusinessLogic.FileMonitor
         {
             m_monitoredFolders.Add(path);
 
-            if (m_fileWatcherWrappers.ContainsKey(path) == false)
+            if (!m_fileWatcherWrappers.ContainsKey(path))
             {
                 var watcher = m_fileWatcherWrapperFactory.Create();
                 SetupFileWatcher(watcher, path);
