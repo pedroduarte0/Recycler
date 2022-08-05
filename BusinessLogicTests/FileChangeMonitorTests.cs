@@ -255,7 +255,7 @@ namespace BusinessLogicTests
         }
 
         [TestMethod]
-        public void OnFileWatcherChanged_NewFile_EnqueuesChangeInfo()
+        public void OnFileWatcherChanged_NewFile_EnqueuesFileDescriptor()
         {
             const string path = "path to folder";
             const string createdFileName = "filename";
