@@ -1,4 +1,6 @@
-﻿namespace BusinessLogic.FileMonitor.FileDescriptor
+﻿using System.IO;
+
+namespace BusinessLogic.FileMonitor.FileDescriptor
 {
     public class FileDescriptor
     {
