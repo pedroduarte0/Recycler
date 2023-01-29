@@ -91,9 +91,6 @@ namespace BusinessLogic.FileMonitor
                 case WatcherChangeTypes.Renamed:
                     // TODO: What to do?
                     break;
-                case WatcherChangeTypes.All:
-                    // TODO: What to do?
-                    break;
                 default:
                     break;
             }
