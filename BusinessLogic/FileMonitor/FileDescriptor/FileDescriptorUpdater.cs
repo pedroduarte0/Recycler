@@ -49,13 +49,11 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
                     switch (item.ChangeInfoType)
                     {
                         case ChangeInfoType.Created:
-                            var created = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
                             m_fileDescriptorIndexer.Insert(item);
                             break;
 
                         case ChangeInfoType.Deleted:
-                            var deleted = new FileDescriptor(item.ChangeInfoType, item.FullPath, item.Name);
-                            m_fileDescriptorIndexer.Remove(deleted);
+                            m_fileDescriptorIndexer.Remove(item);
                             break;
 
                         case ChangeInfoType.Changed:
