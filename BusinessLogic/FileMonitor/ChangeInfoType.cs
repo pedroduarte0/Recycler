@@ -5,5 +5,6 @@
         Created,
         Changed,
         Deleted,
+        NoOperation
     }
 }

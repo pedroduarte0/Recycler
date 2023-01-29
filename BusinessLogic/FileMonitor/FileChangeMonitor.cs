@@ -96,7 +96,7 @@ namespace BusinessLogic.FileMonitor
         {
             Debug.WriteLine($"FileSystemEventArgs: {e.Name}, {e.ChangeType}");
 
-            ChangeInfoType changeInfoType;// = ChangeInfoType.Created;
+            var changeInfoType = ChangeInfoType.NoOperation;
 
             switch (e.ChangeType)
             {
@@ -114,6 +114,7 @@ namespace BusinessLogic.FileMonitor
                     // TODO: What to do?
                     break;
                 default:
+                    changeInfoType = ChangeInfoType.NoOperation;
                     break;
             }
 
