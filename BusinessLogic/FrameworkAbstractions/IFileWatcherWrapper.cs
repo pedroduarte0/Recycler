@@ -18,5 +18,7 @@ namespace BusinessLogic.FrameworkAbstractions
         event FileSystemEventHandler Changed;
 
         event FileSystemEventHandler Deleted;
+
+        event ErrorEventHandler Error;
     }
 }

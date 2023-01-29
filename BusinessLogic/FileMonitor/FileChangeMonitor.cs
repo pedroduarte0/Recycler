@@ -3,6 +3,7 @@ using BusinessLogic.FileMonitor.FileDescriptor;
 using System.Collections.Generic;
 using BusinessLogic.FrameworkAbstractions;
 using System.IO;
+using System;
 
 namespace BusinessLogic.FileMonitor
 {
@@ -67,14 +68,35 @@ namespace BusinessLogic.FileMonitor
             fileWatcherWrapper.Changed += new FileSystemEventHandler(OnFileWatcherEvent);
             fileWatcherWrapper.Deleted += new FileSystemEventHandler(OnFileWatcherEvent);
             // TODO: Rename: example .Renamed += new RenamedEventHandler(OnRenamed);
+            fileWatcherWrapper.Error += new ErrorEventHandler(OnFileWatcherError);
+            
             fileWatcherWrapper.EnableRaisingEvents = true;
+        }
+
+        private static void OnFileWatcherError(object sender, ErrorEventArgs e)
+        {
+            //  Show that an error has been detected.
+            string message = "The FileSystemWatcher has detected an error";
+            Console.WriteLine(message);
+            Debug.WriteLine(message);
+            //  Give more information if the error is due to an internal buffer overflow.
+            if (e.GetException().GetType() == typeof(InternalBufferOverflowException))
+            {
+                //  This can happen if Windows is reporting many file system events quickly
+                //  and internal buffer of the  FileSystemWatcher is not large enough to handle this
+                //  rate of events. The InternalBufferOverflowException error informs the application
+                //  that some of the file system events are being lost.
+                message = "The file system watcher experienced an internal buffer overflow: " + e.GetException().Message;
+                Console.WriteLine(message);
+                Debug.WriteLine(message);
+            }
         }
 
         private void OnFileWatcherEvent(object sender, FileSystemEventArgs e)
         {
             Debug.WriteLine($"FileSystemEventArgs: {e.Name}, {e.ChangeType}");
 
-            var changeInfoType = ChangeInfoType.Created;
+            ChangeInfoType changeInfoType;// = ChangeInfoType.Created;
 
             switch (e.ChangeType)
             {
