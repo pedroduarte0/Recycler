@@ -115,6 +115,7 @@ namespace BusinessLogic.FileMonitor
                     break;
                 default:
                     changeInfoType = ChangeInfoType.NoOperation;
+                    // TODO: Consider to log.
                     break;
             }
 

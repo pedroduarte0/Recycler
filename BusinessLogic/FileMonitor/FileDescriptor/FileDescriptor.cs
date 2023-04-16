@@ -2,6 +2,8 @@
 
 namespace BusinessLogic.FileMonitor.FileDescriptor
 {
+    // https://stackoverflow.com/questions/2646498/best-method-to-store-enum-in-database
+
     public class FileDescriptor
     {
         public ChangeInfoType ChangeInfoType { get; private set; }

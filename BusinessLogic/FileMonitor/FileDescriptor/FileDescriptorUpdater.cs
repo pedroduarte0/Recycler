@@ -16,7 +16,6 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
     /// </remarks>
     public class FileDescriptorUpdater : IFileDescriptorUpdater
     {
-        private const int MonitorPeriod = 2000;
         private readonly IThreadWrapper m_threadWrapper;
         private readonly IFileDescriptorIndexer m_fileDescriptorIndexer;
         private BlockingCollection<FileDescriptor> m_queue = new BlockingCollection<FileDescriptor>();
