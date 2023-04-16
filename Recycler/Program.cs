@@ -23,7 +23,10 @@ namespace Recycler
             var watcherFactory = Ioc.Container.Resolve<IFileWatcherWrapperFactory>();
             var descriptorUpdater = Ioc.Container.Resolve<IFileDescriptorUpdater>();
 
-         var fileMonitor = new FileChangeMonitor(
+            //SQLiteFileDescriptorIndexer s = new SQLiteFileDescriptorIndexer();        // add package: Install-Package System.Data.SQLite.Core
+            //s.Initialize();
+
+            var fileMonitor = new FileChangeMonitor(
                 storage,
                 watcherFactory,
                 descriptorUpdater);
