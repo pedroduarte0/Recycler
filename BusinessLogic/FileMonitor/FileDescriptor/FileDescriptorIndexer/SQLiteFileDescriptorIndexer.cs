@@ -7,6 +7,27 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
     public class SQLiteFileDescriptorIndexer : IFileDescriptorIndexer
     {
+        private readonly SQLiteConnection m_connection;
+
+        public SQLiteFileDescriptorIndexer()
+        {
+            const string dbFilename = "RecyclerDB.sqlite";
+
+            string dbPath = GetDatabasePath(dbFilename);
+            string connectionString = string.Format("DataSource={0}", dbPath);
+
+            m_connection = new SQLiteConnection(connectionString);
+            m_connection.Open();
+        }
+
+        ~SQLiteFileDescriptorIndexer()
+        {
+            if (m_connection != null)
+            {
+               m_connection.Dispose();
+            }
+        }
+
         public void Initialize()
         {
             CreateDatabaseIfDoesNotExist();
@@ -34,20 +55,11 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         private void CreateDatabaseIfDoesNotExist()
         {
-            const string dbFilename = "RecyclerDB.sqlite";
-
-            string dbPath = GetDatabasePath(dbFilename);
-
-            string connectionString = string.Format("DataSource={0}", dbPath);
-
-            using var con = new SQLiteConnection(connectionString);
-            con.Open();
-
             // Check if database exists by checking whether a table exists. Optionally, could just check if the local db file was there, as an afterthought.
             bool tableExists = false;
             const string tableName = "FileDescriptors";
             string stm = $"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}';";
-            using var cmdCheck = new SQLiteCommand(stm, con);
+            using var cmdCheck = new SQLiteCommand(stm, m_connection);
             using SQLiteDataReader rdr = cmdCheck.ExecuteReader();
             if (rdr.Read())
             {
@@ -60,7 +72,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
             // Initialize database
             if (!tableExists)
             {
-                using var cmd = new SQLiteCommand(con);
+                using var cmd = new SQLiteCommand(m_connection);
                 cmd.CommandText = @"CREATE TABLE FileDescriptors(ChangeInfoType INTEGER NOT NULL,
 	            FullPath  varchar(400) NOT NULL,
                 Name  varchar(255) NOT NULL,
