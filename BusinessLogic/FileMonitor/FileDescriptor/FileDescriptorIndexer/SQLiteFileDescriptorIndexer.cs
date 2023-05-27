@@ -8,6 +8,8 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
     public class SQLiteFileDescriptorIndexer : IFileDescriptorIndexer
     {
         private readonly SQLiteConnection m_connection;
+        private readonly string m_tableName = "FileDescriptors";
+
 
         public SQLiteFileDescriptorIndexer()
         {
@@ -35,7 +37,18 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         public void Insert(FileDescriptor descriptor)
         {
-            throw new System.NotImplementedException();
+            using var cmd = new SQLiteCommand(m_connection);
+            
+            cmd.CommandText = $"INSERT INTO {m_tableName}(ChangeInfoType, FullPath, Name, Age)" +
+                              " VALUES(@changeInfoType, @fullPath, @name, @age)";
+
+            cmd.Parameters.AddWithValue("@changeInfoType", descriptor.ChangeInfoType);
+            cmd.Parameters.AddWithValue("@fullPath", descriptor.FullPath);
+            cmd.Parameters.AddWithValue("@name", descriptor.Name);
+            cmd.Parameters.AddWithValue("@age", descriptor.Age);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
         }
 
         public void Persist()
@@ -57,13 +70,12 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
         {
             // Check if database exists by checking whether a table exists. Optionally, could just check if the local db file was there, as an afterthought.
             bool tableExists = false;
-            const string tableName = "FileDescriptors";
-            string stm = $"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}';";
+            string stm = $"SELECT name FROM sqlite_master WHERE type='table' AND name='{m_tableName}';";
             using var cmdCheck = new SQLiteCommand(stm, m_connection);
             using SQLiteDataReader rdr = cmdCheck.ExecuteReader();
             if (rdr.Read())
             {
-                if (rdr.GetValue(0).ToString() == tableName)
+                if (rdr.GetValue(0).ToString() == m_tableName)
                 {
                     tableExists = true;
                 }
