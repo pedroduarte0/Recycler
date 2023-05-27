@@ -6,12 +6,12 @@ using System;
 
 namespace BusinessLogicTests
 {
-    // Just some tests to run and debug SQLiteFileDescriptorIndexer
+    // Just a way to run and debug SQLiteFileDescriptorIndexer, not the conventional unit-test style.
     [TestClass]
     public class DebugSQLiteUnitTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void Call_Initialize()
         {
             // Arrange
             var indexer = new SQLiteFileDescriptorIndexer();
@@ -24,7 +24,7 @@ namespace BusinessLogicTests
         }
 
         [TestMethod]
-        public void Insert()
+        public void Call_Insert()
         {
             // Arrange
             var indexer = new SQLiteFileDescriptorIndexer();
