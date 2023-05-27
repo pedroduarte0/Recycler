@@ -1,30 +1,19 @@
 ﻿using BusinessLogic;
 using BusinessLogic.FileMonitor;
 using BusinessLogic.FileMonitor.FileDescriptor;
+using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
 using BusinessLogic.FrameworkAbstractions;
-using System;
-using System.Windows.Forms;
 using Unity;
 
 namespace Recycler
 {
-    static class Program
+    internal class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
             var storage = Ioc.Container.Resolve<IStorage>();
             var watcherFactory = Ioc.Container.Resolve<IFileWatcherWrapperFactory>();
             var descriptorUpdater = Ioc.Container.Resolve<IFileDescriptorUpdater>();
-
-            //SQLiteFileDescriptorIndexer s = new SQLiteFileDescriptorIndexer();        // add package: Install-Package System.Data.SQLite.Core
-            //s.Initialize();
 
             var fileMonitor = new FileChangeMonitor(
                 storage,
