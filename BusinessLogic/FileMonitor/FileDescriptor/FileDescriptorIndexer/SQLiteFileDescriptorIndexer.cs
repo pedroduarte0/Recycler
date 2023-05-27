@@ -39,7 +39,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
         {
             using var cmd = new SQLiteCommand(m_connection);
             
-            cmd.CommandText = $"INSERT INTO {m_tableName}(ChangeInfoType, FullPath, Name, Age)" +
+            cmd.CommandText = $"INSERT OR REPLACE INTO {m_tableName}(ChangeInfoType, FullPath, Name, Age)" +
                               " VALUES(@changeInfoType, @fullPath, @name, @age)";
 
             cmd.Parameters.AddWithValue("@changeInfoType", descriptor.ChangeInfoType);
