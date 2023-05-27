@@ -66,7 +66,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
             throw new System.NotImplementedException();
         }
 
-        private void CreateDatabaseIfDoesNotExist()
+        private void CreateDatabaseIfDoesNotExist()     //This is not needed: https://github.com/pedroduarte0/Recycler/issues/22
         {
             // Check if database exists by checking whether a table exists. Optionally, could just check if the local db file was there, as an afterthought.
             bool tableExists = false;
