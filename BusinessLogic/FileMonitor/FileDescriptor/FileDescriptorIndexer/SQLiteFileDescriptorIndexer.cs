@@ -53,12 +53,20 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         public void Persist()
         {
-            throw new System.NotImplementedException();
+            // Does nothing. Persistung isn't  needed for this implementation.
         }
 
         public void Remove(FileDescriptor descriptor)
         {
-            throw new System.NotImplementedException();
+            using var cmd = new SQLiteCommand(m_connection);
+
+            cmd.CommandText = $"DELETE FROM {m_tableName}" +
+                              " WHERE FullPath = @fullPath";
+
+            cmd.Parameters.AddWithValue("@fullPath", descriptor.FullPath);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
         }
 
         public ICollection<FileDescriptor> RetrieveAll()

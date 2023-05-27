@@ -39,5 +39,24 @@ namespace BusinessLogicTests
             // Assert
             Assert.IsTrue(true);
         }
+
+        [TestMethod]
+        public void Call_Remove()
+        {
+            // Arrange
+            var indexer = new SQLiteFileDescriptorIndexer();
+            indexer.Initialize();
+
+            FileDescriptor descriptor = new FileDescriptor(ChangeInfoType.Created, "fullname", "name");
+            descriptor.Age = 2;
+
+            indexer.Insert(descriptor);
+
+            // Act
+            indexer.Remove(descriptor);
+
+            // Assert
+            Assert.IsTrue(true);
+        }
     }
 }
