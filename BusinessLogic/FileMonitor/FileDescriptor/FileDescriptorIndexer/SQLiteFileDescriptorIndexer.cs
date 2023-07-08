@@ -17,17 +17,14 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
             m_connection.Open();
         }
 
-        ~SQLiteFileDescriptorIndexer()
-        {
-            if (m_connection != null)
-            {
-               m_connection.Dispose();
-            }
-        }
-
         public void Initialize()
         {
             CreateDatabaseIfDoesNotExist();
+        }
+
+        public void Dispose()
+        {
+            m_connection?.Dispose();
         }
 
         public void Insert(FileDescriptor descriptor)

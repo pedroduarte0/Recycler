@@ -2,7 +2,7 @@
 
 namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
-    public interface IFileDescriptorIndexer
+    public interface IFileDescriptorIndexer : IDisposable
     {
         void Initialize();
 

@@ -22,11 +22,6 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore
             m_mapper = new Mapper(config);
         }
 
-        ~EFCoreFileDescriptorIndexer()
-        {
-            m_context?.Dispose();
-        }
-
         // TODO: Consider to move this to the constructor and remove this method.
         public void Initialize()
         {
@@ -37,6 +32,11 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore
                 .Options;
 
             m_context = new FileDescriptorContext(options);
+        }
+
+        public void Dispose()
+        {
+            m_context?.Dispose();
         }
 
         public void Insert(FileDescriptor descriptor)

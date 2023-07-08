@@ -1,7 +1,6 @@
 ﻿namespace BusinessLogic.FileMonitor.FileDescriptor
 {
-    public interface IFileDescriptorUpdater
-    {
+    public interface IFileDescriptorUpdater : IDisposable    {
         void Enqueue(FileDescriptor fileDescriptor);
     }
 }

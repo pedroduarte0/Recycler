@@ -32,6 +32,10 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
             }
         }
 
+        public void Dispose()
+        {
+        }
+
         public void Insert(FileDescriptor descriptor)
         {
             m_descriptors[GetKey(descriptor)] = descriptor;

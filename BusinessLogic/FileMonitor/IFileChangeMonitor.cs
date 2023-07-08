@@ -4,7 +4,7 @@
 
 namespace BusinessLogic
 {
-    public interface IFileChangeMonitor
+    public interface IFileChangeMonitor : IDisposable
     {
         void AddFolderForMonitoring(string path);
 

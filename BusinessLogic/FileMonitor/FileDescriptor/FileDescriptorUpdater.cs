@@ -94,5 +94,10 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
         {
             m_queue.CompleteAdding();
         }
+
+        public void Dispose()
+        {
+            m_fileDescriptorIndexer.Dispose();
+        }
     }
 }

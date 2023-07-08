@@ -129,5 +129,15 @@ namespace BusinessLogic.FileMonitor
             // TODO: return a copy.
             return m_monitoredFolders;
         }
+
+        public void Dispose()
+        {
+            foreach (var watcher in m_fileWatcherWrappers.Values)
+            {
+                watcher.Dispose();
+            }
+
+            m_descriptorUpdater.Dispose();
+        }
     }
 }
