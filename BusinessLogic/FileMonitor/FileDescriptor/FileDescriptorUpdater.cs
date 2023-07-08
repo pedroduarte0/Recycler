@@ -43,7 +43,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor
             {
                 try
                 {
-                    var item = m_queue.Take();
+                    FileDescriptor item = m_queue.Take();
 
                     switch (item.ChangeInfoType)
                     {

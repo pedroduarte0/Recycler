@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.IO;
+﻿using System.Data.SQLite;
+using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.Common;
 
 namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 {
@@ -13,10 +11,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         public SQLiteFileDescriptorIndexer()
         {
-            const string dbFilename = "RecyclerDB.sqlite";
-
-            string dbPath = GetDatabasePath(dbFilename);
-            string connectionString = string.Format("DataSource={0}", dbPath);
+            string connectionString = DataBaseMethodHelpers.GetConnectionString();
 
             m_connection = new SQLiteConnection(connectionString);
             m_connection.Open();
@@ -53,7 +48,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         public void Persist()
         {
-            // Does nothing. Persistung isn't  needed for this implementation.
+            // Does nothing. Persisting isn't  needed for this implementation.
         }
 
         public void Remove(FileDescriptor descriptor)
@@ -101,21 +96,6 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
                 cmd.ExecuteNonQuery();
             }
-        }
-
-        private static string GetDatabasePath(string dbFilename)
-        {
-            // Note: In a comment of https://stackoverflow.com/questions/867485/c-sharp-getting-the-path-of-appdata
-            // it mentions in Linux the appdata folder doesnt exist and tells how to create it.
-            string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-            string dbFolderPath = Path.Combine(localAppDataPath, "Recycler");
-            if (!Directory.Exists(dbFolderPath))
-            {
-                Directory.CreateDirectory(dbFolderPath);
-            }
-
-            return Path.Combine(dbFolderPath, dbFilename);
         }
     }
 }

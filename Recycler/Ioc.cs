@@ -4,6 +4,7 @@ using BusinessLogic;
 using BusinessLogic.FrameworkAbstractions;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
 using BusinessLogic.FileMonitor.FileDescriptor;
+using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore;
 
 namespace Recycler
 {
@@ -29,7 +30,7 @@ namespace Recycler
             m_container.RegisterType<IFileWatcherWrapperFactory, FileWatcherWrapperFactory>(
                 TypeLifetime.Singleton);
 
-            m_container.RegisterType<IFileDescriptorIndexer, PlainTextFileDescriptorIndexer>(
+            m_container.RegisterType<IFileDescriptorIndexer, EFCoreFileDescriptorIndexer>(
                 TypeLifetime.Singleton);
 
             m_container.RegisterType<IFileDescriptorUpdater, FileDescriptorUpdater>(
