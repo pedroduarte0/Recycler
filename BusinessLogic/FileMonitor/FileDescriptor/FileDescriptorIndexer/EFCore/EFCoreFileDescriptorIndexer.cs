@@ -47,7 +47,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore
             //  https ://learn.microsoft.com/en-us/training/modules/persist-data-ef-core/4-interacting-data
 
             bool exists = m_context.FileDescriptors.Any(fd =>
-                fd.FullPath == descriptor.FullPath);        // Is enough to check on the primary key.
+                fd.FullPath == descriptor.FullPath);        // It is enough to check on the primary key.
 
             if (exists)
             {
