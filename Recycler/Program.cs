@@ -11,7 +11,7 @@ namespace Recycler
     internal class Program
     {
         private static FileChangeMonitor? fileMonitor;
-        private static AutoResetEvent m_autoResetEvent = new AutoResetEvent(false);
+        private static ManualResetEvent m_resetEvent = new ManualResetEvent(false);
 
         static void Main(string[] args)
         {
@@ -28,7 +28,7 @@ namespace Recycler
 
             fileMonitor.AddFolderForMonitoring("C:\\temp");
 
-            m_autoResetEvent.WaitOne();            
+            m_resetEvent.WaitOne();            
         }
 
         private static void SetupControlCHandler()
@@ -36,7 +36,7 @@ namespace Recycler
             Console.CancelKeyPress += (sender, eventArgs) =>
             {
                 eventArgs.Cancel = true;
-                m_autoResetEvent.Set();
+                m_resetEvent.Set();
             };
         }
     }
