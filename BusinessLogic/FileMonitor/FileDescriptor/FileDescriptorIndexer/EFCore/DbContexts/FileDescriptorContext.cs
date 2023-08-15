@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.Common;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore.Entities;
+using BusinessLogic.FrameworkAbstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore.DbContexts
@@ -34,7 +35,10 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore.
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(DataBaseMethodHelpers.GetConnectionString());
+            //TODO: inject instead
+            var helpers = new DataBaseMethodHelpers(new DirectoryWrapper());
+
+            optionsBuilder.UseSqlite(helpers.GetConnectionString());
             base.OnConfiguring(optionsBuilder);
         }
     }

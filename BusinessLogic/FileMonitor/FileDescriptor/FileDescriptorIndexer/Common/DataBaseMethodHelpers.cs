@@ -1,28 +1,42 @@
-﻿namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.Common
+﻿using BusinessLogic.FrameworkAbstractions;
+
+namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.Common
 {
-    internal static class DataBaseMethodHelpers
+    public class DataBaseMethodHelpers : IDataBaseMethodHelpers
     {
-        internal static string GetConnectionString()
+        private readonly IDirectoryWrapper m_directoryWrapper;
+
+        public DataBaseMethodHelpers(IDirectoryWrapper directoryWrapper)
+        {
+            m_directoryWrapper = directoryWrapper;
+        }
+
+        public string GetConnectionString()
         {
             const string dbFilename = "RecyclerDB.sqlite";
 
-            string dbPath = DataBaseMethodHelpers.GetDatabasePath(dbFilename);
-            return string.Format("DataSource={0}", dbPath);
+            string dbPath = GetDatabasePath();
+            CreatePathIfNotExists(dbPath);
+
+            string pathToDb = Path.Combine(dbPath, dbFilename);
+            return string.Format("DataSource={0}", pathToDb);
         }
 
-        private static string GetDatabasePath(string dbFilename)
+        private void CreatePathIfNotExists(string path)
+        {
+            if (!m_directoryWrapper.Exists(path))
+            {
+                m_directoryWrapper.CreateDirectory(path);
+            }
+        }
+
+        private static string GetDatabasePath()
         {
             // Note: In a comment of https://stackoverflow.com/questions/867485/c-sharp-getting-the-path-of-appdata
             // it mentions in Linux the appdata folder doesnt exist and tells how to create it.
             string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-            string dbFolderPath = Path.Combine(localAppDataPath, "Recycler");
-            if (!Directory.Exists(dbFolderPath))
-            {
-                Directory.CreateDirectory(dbFolderPath);
-            }
-
-            return Path.Combine(dbFolderPath, dbFilename);
+            return Path.Combine(localAppDataPath, "Recycler");
         }
     }
 }

@@ -8,10 +8,9 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
         private readonly SQLiteConnection m_connection;
         private readonly string m_tableName = "FileDescriptors";
 
-
-        public SQLiteFileDescriptorIndexer()
+        public SQLiteFileDescriptorIndexer(IDataBaseMethodHelpers dataBaseMethodHelpers)
         {
-            string connectionString = DataBaseMethodHelpers.GetConnectionString();
+            string connectionString = dataBaseMethodHelpers.GetConnectionString();
 
             m_connection = new SQLiteConnection(connectionString);
             m_connection.Open();

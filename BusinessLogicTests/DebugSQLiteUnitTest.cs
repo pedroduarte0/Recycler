@@ -1,6 +1,8 @@
 ﻿using BusinessLogic.FileMonitor;
 using BusinessLogic.FileMonitor.FileDescriptor;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
+using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.Common;
+using BusinessLogic.FrameworkAbstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -10,11 +12,13 @@ namespace BusinessLogicTests
     [TestClass]
     public class DebugSQLiteUnitTest
     {
+        private IDataBaseMethodHelpers m_helpers = new DataBaseMethodHelpers(new DirectoryWrapper());
+
         [TestMethod]
         public void Call_Initialize()
         {
             // Arrange
-            var indexer = new SQLiteFileDescriptorIndexer();
+            var indexer = new SQLiteFileDescriptorIndexer(m_helpers);
 
             // Act
             indexer.Initialize();
@@ -27,7 +31,7 @@ namespace BusinessLogicTests
         public void Call_Insert()
         {
             // Arrange
-            var indexer = new SQLiteFileDescriptorIndexer();
+            var indexer = new SQLiteFileDescriptorIndexer(m_helpers);
             indexer.Initialize();
 
             FileDescriptor descriptor = new FileDescriptor(ChangeInfoType.Created, "fullname", "name");
@@ -44,7 +48,7 @@ namespace BusinessLogicTests
         public void Call_Remove()
         {
             // Arrange
-            var indexer = new SQLiteFileDescriptorIndexer();
+            var indexer = new SQLiteFileDescriptorIndexer(m_helpers);
             indexer.Initialize();
 
             FileDescriptor descriptor = new FileDescriptor(ChangeInfoType.Created, "fullname", "name");
