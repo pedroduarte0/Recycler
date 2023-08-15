@@ -13,11 +13,11 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore
     {
         private FileDescriptorContext m_context = null!;
         private readonly Mapper m_mapper;
-        private readonly IDataBaseMethodHelpers m_dataBaseMethodHelpers;
+        private readonly IDatabaseHelper m_databaseHelper;
 
-        public EFCoreFileDescriptorIndexer(IDataBaseMethodHelpers dataBaseMethodHelpers)
+        public EFCoreFileDescriptorIndexer(IDatabaseHelper databaseHelper)
         {
-            m_dataBaseMethodHelpers = dataBaseMethodHelpers;
+            m_databaseHelper = databaseHelper;
 
             var config = new MapperConfiguration(cfg =>
                 cfg.CreateMap<FileDescriptor, FileDescriptorEntity>());
@@ -28,7 +28,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore
         // TODO: Consider to move this to the constructor and remove this method.
         public void Initialize()
         {
-            string connectionString = m_dataBaseMethodHelpers.GetConnectionString();
+            string connectionString = m_databaseHelper.GetConnectionString();
 
             var options = new DbContextOptionsBuilder<FileDescriptorContext>()
                 .UseSqlite(connectionString)

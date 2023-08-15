@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.Common
 {
-    public interface IDataBaseMethodHelpers
+    public interface IDatabaseHelper
     {
         string GetConnectionString();
     }

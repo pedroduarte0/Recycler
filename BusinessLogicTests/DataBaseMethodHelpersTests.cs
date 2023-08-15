@@ -6,7 +6,7 @@ using Moq;
 namespace BusinessLogicTests
 {
     [TestClass]
-    public class DataBaseMethodHelpersTests
+    public class DatabaseHelperTests
     {
         [TestMethod]
         public void GetConnectionString_CreatesDbPath_IfNotExists()
@@ -18,7 +18,7 @@ namespace BusinessLogicTests
             var directoryWrapper = Mock.Of<IDirectoryWrapper>(x =>
                 x.Exists(Capture.In(input)) == false);
 
-            DataBaseMethodHelpers sut = new(directoryWrapper);
+            DatabaseHelper sut = new(directoryWrapper);
 
             // Act
             string actual = sut.GetConnectionString();

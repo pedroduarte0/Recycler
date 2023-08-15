@@ -2,11 +2,11 @@
 
 namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.Common
 {
-    public class DataBaseMethodHelpers : IDataBaseMethodHelpers
+    public class DatabaseHelper : IDatabaseHelper
     {
         private readonly IDirectoryWrapper m_directoryWrapper;
 
-        public DataBaseMethodHelpers(IDirectoryWrapper directoryWrapper)
+        public DatabaseHelper(IDirectoryWrapper directoryWrapper)
         {
             m_directoryWrapper = directoryWrapper;
         }

@@ -12,7 +12,7 @@ namespace BusinessLogicTests
     [TestClass]
     public class DebugSQLiteUnitTest
     {
-        private IDataBaseMethodHelpers m_helpers = new DataBaseMethodHelpers(new DirectoryWrapper());
+        private IDatabaseHelper m_helpers = new DatabaseHelper(new DirectoryWrapper());
 
         [TestMethod]
         public void Call_Initialize()

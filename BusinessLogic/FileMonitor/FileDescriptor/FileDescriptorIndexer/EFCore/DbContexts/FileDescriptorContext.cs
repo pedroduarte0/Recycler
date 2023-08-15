@@ -36,9 +36,9 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer.EFCore.
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //TODO: inject instead
-            var helpers = new DataBaseMethodHelpers(new DirectoryWrapper());
+            var helper = new DatabaseHelper(new DirectoryWrapper());
 
-            optionsBuilder.UseSqlite(helpers.GetConnectionString());
+            optionsBuilder.UseSqlite(helper.GetConnectionString());
             base.OnConfiguring(optionsBuilder);
         }
     }
