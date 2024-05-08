@@ -1,43 +1,41 @@
 ﻿using BusinessLogic;
 using BusinessLogic.FrameworkAbstractions;
-using Moq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
+using Xunit;
+using NSubstitute;
 
 namespace BusinessLogicTests
 {
-    [TestClass]
     public class FileStorageTests
     {
-        [TestMethod]
+        [Fact]
         public void SaveCollectionStrings_OneString_SavesAsLine()
         {
             // Arrange
             var collectionWithOneString = new List<string> { "singleString" };
             string path = "aFilePath";
 
-            var wrapperMock = Mock.Of<ISystemIOFileWrapper>();
-            
-            var sot = new FileStorage(wrapperMock);
+            var wrapperMock = Substitute.For<ISystemIOFileWrapper>();
+
+            var sut = new FileStorage(wrapperMock);
 
             // Act
-            sot.Save(collectionWithOneString, path);
+            sut.Save(collectionWithOneString, path);
 
             // Assert
-            Mock.Get(wrapperMock)
-                .Verify(x => x.WriteAllText(path, collectionWithOneString.First() + Environment.NewLine), Times.Once);
+            wrapperMock.Received(1).WriteAllText(path, collectionWithOneString.First() + Environment.NewLine);
         }
 
-        [TestMethod]
+        [Fact]
         public void SaveCollectionStrings_TwoString_SavesThemAsLines()
         {
             // Arrange
             var strings = new List<string> { "oneString", "anotherString" };
             string path = "aFilePath";
 
-            var wrapperMock = Mock.Of<ISystemIOFileWrapper>();
+            var wrapperMock = Substitute.For<ISystemIOFileWrapper>();
 
-            var sot = new FileStorage(wrapperMock);
+            var sut = new FileStorage(wrapperMock);
 
             var sb = new StringBuilder();
             foreach (string item in strings)
@@ -48,48 +46,43 @@ namespace BusinessLogicTests
             string expectedLines = sb.ToString();
 
             // Act
-            sot.Save(strings, path);
+            sut.Save(strings, path);
 
             // Assert
-            Mock.Get(wrapperMock)
-                .Verify(x => x.WriteAllText(path, expectedLines), Times.Once);
+            wrapperMock.Received(1).WriteAllText(path, expectedLines);
         }
 
-        [TestMethod]
-        public void SaveSingleStrings_OneString_SavesIt()
+        [Fact]
+        public void SaveSingleString_OneString_SavesIt()
         {
             // Arrange
-            string oneString = "singleString";
-            string path = "aFilePath";
+            var wrapperMock = Substitute.For<ISystemIOFileWrapper>();
+            var sut = new FileStorage(wrapperMock);
 
-            var wrapperMock = Mock.Of<ISystemIOFileWrapper>();
-
-            var sot = new FileStorage(wrapperMock);
+            string path = "a path";
+            string stringToSave = "a string";
 
             // Act
-            sot.Save(oneString, path);
+            sut.Save(stringToSave, path);
 
             // Assert
-            Mock.Get(wrapperMock)
-                .Verify(x => x.WriteAllText(path, oneString), Times.Once);
+            wrapperMock.Received(1).WriteAllText(path, stringToSave);
         }
-
-        [TestMethod]
+        
+        [Fact]
         public void Load_SourcePath_LoadsTheString()
         {
             // Arrange
-            string path = "aFilePath";
+            var wrapperMock = Substitute.For<ISystemIOFileWrapper>();
+            var sut = new FileStorage(wrapperMock);
 
-            var wrapperMock = Mock.Of<ISystemIOFileWrapper>();
-
-            var sot = new FileStorage(wrapperMock);
+            string path = "a path";
 
             // Act
-            sot.Load(path);
+            sut.Load(path);
 
             // Assert
-            Mock.Get(wrapperMock)
-                .Verify(x => x.ReadAllText(path), Times.Once);
+            wrapperMock.Received(1).ReadAllText(path);
         }
     }
 }
