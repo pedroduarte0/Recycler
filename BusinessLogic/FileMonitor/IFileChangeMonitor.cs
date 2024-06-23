@@ -1,8 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("BusinessLogicTests")]
-
-namespace BusinessLogic
+﻿namespace BusinessLogic
 {
     public interface IFileChangeMonitor
     {
