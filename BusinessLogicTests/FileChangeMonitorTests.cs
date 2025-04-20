@@ -3,16 +3,13 @@ using BusinessLogic.FileMonitor;
 using BusinessLogic.FileMonitor.FileDescriptor;
 using BusinessLogic.FrameworkAbstractions;
 using FluentAssertions;
+using NSubstitute;
+using Xunit;
 
 namespace BusinessLogicTests
 {
     namespace xUnit
     {
-        using NSubstitute;
-        using System;
-        using System.IO;
-        using Xunit;
-
         public class FileChangeMonitorTests
         {
             [Fact]
