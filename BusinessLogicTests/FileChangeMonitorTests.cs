@@ -346,17 +346,15 @@ namespace BusinessLogicTests
 
                 fileMonitor.AddFolderForMonitoring(path);
 
-                bool wasCalled = false;
-                fileWatcher.Changed += (sender, args) => wasCalled = true;
-
                 // Act
-                fileWatcher.Changed += Raise.EventWith(new object(), new FileSystemEventArgs(
+                fileWatcher.Changed += Raise.Event<FileSystemEventHandler>(new object(), new FileSystemEventArgs(
                     changeType: WatcherChangeTypes.Created,
                     directory: path,
-                    name: createdFileName)));
+                    name: createdFileName));
 
                 // Assert
-                wasCalled.Should().BeTrue();
+                descriptorUpdater.Received(1).Enqueue(Arg.Is<FileDescriptor>(c => c.FullPath ==
+                    Path.Combine(path, createdFileName)));
             }
         }
 
