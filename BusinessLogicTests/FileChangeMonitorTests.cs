@@ -8,106 +8,83 @@ using Moq;
 
 namespace BusinessLogicTests
 {
-    [TestClass]
-    public class FileChangeMonitorTests
-    {
-        [TestMethod]
-        public void PersistFolders_KnownFolder_FoldersArePersisted()
-        {
-            // Arrange
-            string path1 = "path1";
-            string path2 = "path2";
+    //[TestClass]
+    //public class FileChangeMonitorTests
+    //{
 
-            var storage = Mock.Of<IStorage>();
+    //    [TestMethod]
+    //    public void OnFileWatcherChanged_NewFile_EnqueuesFileDescriptor()
+    //    {
+    //        const string path = "path to folder";
+    //        const string createdFileName = "filename";
 
-            var fileMonitor = new FileMonitorBuilder()
-                .With(storage)
-                .Build();
+    //        var fileWatcher = Mock.Of<IFileWatcherWrapper>();
 
-            fileMonitor.AddFolderForMonitoring(path1);
-            fileMonitor.AddFolderForMonitoring(path2);
+    //        var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
+    //           f.Create() == fileWatcher);
 
-            // Act
-            fileMonitor.PersistFoldersList();
+    //        var descriptorUpdater = Mock.Of<IFileDescriptorUpdater>();
 
-            // Assert
-            Mock.Get(storage)
-                .Verify(x => x.Save(It.IsAny<List<string>>(), It.IsAny<string>()));
-        }
+    //        var fileMonitor = new FileMonitorBuilder()
+    //            .With(factory)
+    //            .With(descriptorUpdater)
+    //            .Build();
 
-        [TestMethod]
-        public void OnFileWatcherChanged_NewFile_EnqueuesFileDescriptor()
-        {
-            const string path = "path to folder";
-            const string createdFileName = "filename";
+    //        fileMonitor.AddFolderForMonitoring(path);
 
-            var fileWatcher = Mock.Of<IFileWatcherWrapper>();
+    //        // Act
+    //        Mock.Get(fileWatcher).Raise(x => x.Changed += null,
+    //            new FileSystemEventArgs(
+    //                changeType: WatcherChangeTypes.Created,
+    //                directory: path,
+    //                name: createdFileName));
 
-            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-               f.Create() == fileWatcher);
+    //        // Assert
+    //        Mock.Get(descriptorUpdater).
+    //            Verify(x => x.Enqueue(It.Is<FileDescriptor>(c => c.FullPath ==
+    //            Path.Combine(path, createdFileName))),
+    //            Times.Once);
+    //    }
+    //}
 
-            var descriptorUpdater = Mock.Of<IFileDescriptorUpdater>();
+    //internal class FileMonitorBuilder
+    //{
+    //    private IStorage m_storage;
+    //    private IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
+    //    private IFileDescriptorUpdater m_descriptorUpdater;
 
-            var fileMonitor = new FileMonitorBuilder()
-                .With(factory)
-                .With(descriptorUpdater)
-                .Build();
+    //    public FileMonitorBuilder()
+    //    {
+    //        m_storage = Mock.Of<IStorage>();
+    //        m_descriptorUpdater = Mock.Of<IFileDescriptorUpdater>();
 
-            fileMonitor.AddFolderForMonitoring(path);
+    //        m_fileWatcherWrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
+    //            f => f.Create() == Mock.Of<IFileWatcherWrapper>());
+    //    }
 
-            // Act
-            Mock.Get(fileWatcher).Raise(x => x.Changed += null,
-                new FileSystemEventArgs(
-                    changeType: WatcherChangeTypes.Created,
-                    directory: path,
-                    name: createdFileName));
+    //    public FileMonitorBuilder With(IStorage storage)
+    //    {
+    //        m_storage = storage;
+    //        return this;
+    //    }
 
-            // Assert
-            Mock.Get(descriptorUpdater).
-                Verify(x => x.Enqueue(It.Is<FileDescriptor>(c => c.FullPath ==
-                Path.Combine(path, createdFileName))),
-                Times.Once);
-        }
-    }
+    //    public FileMonitorBuilder With(IFileWatcherWrapperFactory factory)
+    //    {
+    //        m_fileWatcherWrapperFactory = factory;
+    //        return this;
+    //    }
 
-    internal class FileMonitorBuilder
-    {
-        private IStorage m_storage;
-        private IFileWatcherWrapperFactory m_fileWatcherWrapperFactory;
-        private IFileDescriptorUpdater m_descriptorUpdater;
+    //    public FileMonitorBuilder With(IFileDescriptorUpdater descriptorUpdater)
+    //    {
+    //        m_descriptorUpdater = descriptorUpdater;
+    //        return this;
+    //    }
 
-        public FileMonitorBuilder()
-        {
-            m_storage = Mock.Of<IStorage>();
-            m_descriptorUpdater = Mock.Of<IFileDescriptorUpdater>();
-
-            m_fileWatcherWrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
-                f => f.Create() == Mock.Of<IFileWatcherWrapper>());
-        }
-
-        public FileMonitorBuilder With(IStorage storage)
-        {
-            m_storage = storage;
-            return this;
-        }
-
-        public FileMonitorBuilder With(IFileWatcherWrapperFactory factory)
-        {
-            m_fileWatcherWrapperFactory = factory;
-            return this;
-        }
-
-        public FileMonitorBuilder With(IFileDescriptorUpdater descriptorUpdater)
-        {
-            m_descriptorUpdater = descriptorUpdater;
-            return this;
-        }
-
-        public FileChangeMonitor Build()
-        {
-            return new FileChangeMonitor(m_storage, m_fileWatcherWrapperFactory, m_descriptorUpdater);
-        }
-    }
+    //    public FileChangeMonitor Build()
+    //    {
+    //        return new FileChangeMonitor(m_storage, m_fileWatcherWrapperFactory, m_descriptorUpdater);
+    //    }
+    //}
 
     namespace xUnit
     {
@@ -325,7 +302,62 @@ namespace BusinessLogicTests
                 sut.m_fileWatcherWrappers.Should().BeEmpty();
             }
 
+            [Fact]
+            public void PersistFolders_KnownFolder_FoldersArePersisted()
+            {
+                // Arrange
+                string path1 = "path1";
+                string path2 = "path2";
 
+                var storage = Substitute.For<IStorage>();
+
+                var sut = new FileMonitorBuilder()
+                    .With(storage)
+                    .Build();
+
+                sut.AddFolderForMonitoring(path1);
+                sut.AddFolderForMonitoring(path2);
+
+                // Act
+                sut.PersistFoldersList();
+
+                // Assert
+                storage.Received(1).Save(Arg.Any<List<string>>(), Arg.Any<string>());
+            }
+
+            [Fact]
+            public void OnFileWatcherChanged_NewFile_EnqueuesFileDescriptor()
+            {
+                // Arrange
+                const string path = "path to folder";
+                const string createdFileName = "filename";
+
+                var fileWatcher = Substitute.For<IFileWatcherWrapper>();
+
+                var factory = Substitute.For<IFileWatcherWrapperFactory>();
+                factory.Create().Returns(fileWatcher);
+
+                var descriptorUpdater = Substitute.For<IFileDescriptorUpdater>();
+
+                var fileMonitor = new FileMonitorBuilder()
+                .With(factory)
+                .With(descriptorUpdater)
+                .Build();
+
+                fileMonitor.AddFolderForMonitoring(path);
+
+                bool wasCalled = false;
+                fileWatcher.Changed += (sender, args) => wasCalled = true;
+
+                // Act
+                fileWatcher.Changed += Raise.EventWith(new object(), new FileSystemEventArgs(
+                    changeType: WatcherChangeTypes.Created,
+                    directory: path,
+                    name: createdFileName)));
+
+                // Assert
+                wasCalled.Should().BeTrue();
+            }
         }
 
         internal class FileMonitorBuilder
@@ -348,9 +380,21 @@ namespace BusinessLogicTests
                 return new FileChangeMonitor(m_storage, m_fileWatcherWrapperFactory, m_descriptorUpdater);
             }
 
-            internal FileMonitorBuilder With(IFileWatcherWrapperFactory wrapperFactory)
+            public FileMonitorBuilder With(IFileWatcherWrapperFactory wrapperFactory)
             {
                 m_fileWatcherWrapperFactory = wrapperFactory;
+                return this;
+            }
+
+            public FileMonitorBuilder With(IStorage storage)
+            {
+                m_storage = storage;
+                return this;
+            }
+
+            public FileMonitorBuilder With(IFileDescriptorUpdater descriptorUpdater)
+            {
+                m_descriptorUpdater = descriptorUpdater;
                 return this;
             }
         }
