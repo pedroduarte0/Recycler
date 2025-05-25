@@ -2,46 +2,46 @@
 using BusinessLogic.FileMonitor.FileDescriptor;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
 using BusinessLogic.FrameworkAbstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using FluentAssertions;
+using NSubstitute;
+using Xunit;
 
 namespace BusinessLogicTests
 {
-    [TestClass]
     public class FileDescriptorUpdaterTests
     {
-        [TestMethod]
+        [Fact]
         public void Constructor_InitializesIndexer()
         {
             // Arrange
-            var fileDescriptorIndexer = new Mock<IFileDescriptorIndexer>();
+            var fileDescriptorIndexer = Substitute.For<IFileDescriptorIndexer>();
 
             // Act
-            var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), fileDescriptorIndexer.Object);
+            var sut = new FileDescriptorUpdater(Substitute.For<IThreadWrapper>(), fileDescriptorIndexer);
 
             // Assert
-            fileDescriptorIndexer.Verify(x => x.Initialize(), Times.Once());
+            fileDescriptorIndexer.Received(1).Initialize();
         }
 
-        [TestMethod]
+        [Fact]
         public void Constructor_CreatesQueueHandler()
         {
             // Arrange
-            var threadWrapper = new Mock<IThreadWrapper>();
+            var threadWrapper = Substitute.For<IThreadWrapper>();
 
             // Act
-            var sut = new FileDescriptorUpdater(threadWrapper.Object, Mock.Of<IFileDescriptorIndexer>());
+            var sut = new FileDescriptorUpdater(threadWrapper, Substitute.For<IFileDescriptorIndexer>());
 
             // Assert
-            threadWrapper.Verify(x =>
-                x.TaskFactoryStartNew(It.IsAny<System.Action>()), Times.Once);
+            threadWrapper.Received(1)
+                .TaskFactoryStartNew(Arg.Is<System.Action>(x => x != null));
         }
 
-        [TestMethod]
+        [Fact]
         public void Enqueue_Item_ItemQueued()
         {
             // Arrange
-            var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), Mock.Of<IFileDescriptorIndexer>());
+            var sut = new FileDescriptorUpdater(Substitute.For<IThreadWrapper>(), Substitute.For<IFileDescriptorIndexer>());
 
             var item = new FileDescriptor(ChangeInfoType.Created, "filepath", "name");
 
@@ -49,38 +49,37 @@ namespace BusinessLogicTests
             sut.Enqueue(item);
 
             // Assert
-            Assert.IsTrue(sut.QueueHasItems());
+            sut.QueueHasItems().Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void QueueHandler_ChangeInfoTypeCreated_InsertsFileDescriptor()
         {
             // Arrange
-            var fileDescriptorIndexer = Mock.Of<IFileDescriptorIndexer>();
-            var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), fileDescriptorIndexer);
+            var fileDescriptorIndexer = Substitute.For<IFileDescriptorIndexer>();
+            var sut = new FileDescriptorUpdater(Substitute.For<IThreadWrapper>(), fileDescriptorIndexer);
 
             var newFileChangeInfo = new FileDescriptor(ChangeInfoType.Created, "filepath", "name");
+
             sut.Enqueue(newFileChangeInfo);
             sut.FinalizeQueue();
 
             // Act
-            sut.QueueHandler();     // Calling it explicitely since thread creating is stubbed.
+            sut.QueueHandler();     // Calling it explicitely since thread creating it is stubbed.
 
             // Assert
-            Mock.Get(fileDescriptorIndexer)
-                .Verify(x => x.Insert(
-                    It.Is<FileDescriptor>(fd => fd.ChangeInfoType == ChangeInfoType.Created)),
-                    Times.Once);
+            fileDescriptorIndexer.Received(1).Insert(newFileChangeInfo);
         }
 
-        [TestMethod]
+        [Fact]
         public void QueueHandler_ChangeInfoTypeDeleted_RemovesFileDescriptor()
         {
             // Arrange
-            var fileDescriptorIndexer = Mock.Of<IFileDescriptorIndexer>();
-            var sut = new FileDescriptorUpdater(Mock.Of<IThreadWrapper>(), fileDescriptorIndexer);
+            var fileDescriptorIndexer = Substitute.For<IFileDescriptorIndexer>();
+            var sut = new FileDescriptorUpdater(Substitute.For<IThreadWrapper>(), fileDescriptorIndexer);
 
             var deletedFileChangeInfo = new FileDescriptor(ChangeInfoType.Deleted, "filepath", "name");
+
             sut.Enqueue(deletedFileChangeInfo);
             sut.FinalizeQueue();
 
@@ -88,10 +87,7 @@ namespace BusinessLogicTests
             sut.QueueHandler();
 
             // Assert
-            Mock.Get(fileDescriptorIndexer)
-                .Verify(x => x.Remove(
-                    It.Is<FileDescriptor>(fd => fd.ChangeInfoType == ChangeInfoType.Deleted)),
-                    Times.Once);
+            fileDescriptorIndexer.Received(1).Remove(deletedFileChangeInfo);
         }
     }
 }
