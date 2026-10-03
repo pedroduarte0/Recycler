@@ -1,16 +1,14 @@
 ﻿using BusinessLogic.FileMonitor;
 using BusinessLogic.FileMonitor.FileDescriptor;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+using Xunit;
 
 namespace BusinessLogicTests
 {
     // Just a way to run and debug SQLiteFileDescriptorIndexer, not the conventional unit-test style.
-    [TestClass]
     public class DebugSQLiteUnitTest
     {
-        [TestMethod]
+        [Fact(Skip = "dummy unit test, for manual debugging")]
         public void Call_Initialize()
         {
             // Arrange
@@ -20,10 +18,10 @@ namespace BusinessLogicTests
             indexer.Initialize();
 
             // Assert
-            Assert.IsTrue(true);
+            Assert.True(true);
         }
 
-        [TestMethod]
+        [Fact(Skip = "dummy unit test, for manual debugging")]
         public void Call_Insert()
         {
             // Arrange
@@ -37,10 +35,10 @@ namespace BusinessLogicTests
             indexer.Insert(descriptor);
 
             // Assert
-            Assert.IsTrue(true);
+            Assert.True(true);
         }
 
-        [TestMethod]
+        [Fact(Skip = "dummy unit test, for manual debugging")]
         public void Call_Remove()
         {
             // Arrange
@@ -56,7 +54,7 @@ namespace BusinessLogicTests
             indexer.Remove(descriptor);
 
             // Assert
-            Assert.IsTrue(true);
+            Assert.True(true);
         }
     }
 }
