@@ -1,129 +1,115 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using BusinessLogic;
+﻿using BusinessLogic;
 using BusinessLogic.FileMonitor;
 using BusinessLogic.FileMonitor.FileDescriptor;
 using BusinessLogic.FrameworkAbstractions;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using NSubstitute;
+using Xunit;
 
 namespace BusinessLogicTests
 {
-    [TestClass]
     public class FileChangeMonitorTests
     {
-        [TestMethod]
+        [Fact]
         public void AddFolderForMonitoring_FolderPath_PathIsRemembered()
         {
             // Arrange
             const string path = "path to folder";
 
-            var fileMonitor = new FileMonitorBuilder().Build();
+            var sut = new FileMonitorBuilder().Build();
 
             // Act
-            fileMonitor.AddFolderForMonitoring(path);
+            sut.AddFolderForMonitoring(path);
 
             // Assert
-            IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
+            IList<string> knownFolders = sut.GetMonitoredFolderPath();
             knownFolders.First().Should().Be(path);
         }
 
-        [TestMethod]
+        [Fact]
         public void AddFolderForMonitoring_AddingTwoFolderPaths_BothAreRemembered()
         {
             // Arrange
-            string path1 = "path1";
-            string path2 = "path2";
+            const string path1 = "path to folder";
+            const string path2 = "another path to folder";
 
-            var fileMonitor = new FileMonitorBuilder().Build();
+            var sut = new FileMonitorBuilder().Build();
 
             // Act
-            fileMonitor.AddFolderForMonitoring(path1);
-            fileMonitor.AddFolderForMonitoring(path2);
+            sut.AddFolderForMonitoring(path1);
+            sut.AddFolderForMonitoring(path2);
 
             // Assert
-            IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
+            IList<string> knownFolders = sut.GetMonitoredFolderPath();
             knownFolders.Should().HaveCount(2);
-            path1.Should().Be(knownFolders[0]);
-            path2.Should().Be(knownFolders[1]);
+            knownFolders[0].Should().Be(path1);
+            knownFolders[1].Should().Be(path2);
         }
 
-        [TestMethod]
+        [Fact]
         public void AddFolderForMonitoring_FolderPath_CreatesFileWatcher()
         {
             // Arrange
             const string path = "path to folder";
 
-            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-               f.Create() == Mock.Of<IFileWatcherWrapper>());
+            var factoryMock = Substitute.For<IFileWatcherWrapperFactory>();
+            factoryMock.Create().Returns(Substitute.For<IFileWatcherWrapper>());
 
-            var fileMonitor = new FileMonitorBuilder()
-                .With(factory)
+            var sut = new FileMonitorBuilder().Build();
+
+            // Act
+            sut.AddFolderForMonitoring(path);
+
+            // Assert
+            factoryMock.Received(1);
+        }
+
+        [Fact]
+        public void AddFolderForMonitoring_CalledTwice_CreatesOneFileWatcher()
+        {
+            // Arrange 
+            const string path = "path to folder";
+
+            var factoryMock = Substitute.For<IFileWatcherWrapperFactory>();
+            factoryMock.Create().Returns(Substitute.For<IFileWatcherWrapper>());
+
+            var sut = new FileMonitorBuilder()
+                .With(factoryMock)
                 .Build();
 
             // Act
-            fileMonitor.AddFolderForMonitoring(path);
+            sut.AddFolderForMonitoring(path);
+            sut.AddFolderForMonitoring(path);
 
             // Assert
-            Mock.Get(factory)
-                .Verify(x => x.Create(), Times.Once);
+            factoryMock.Received(1).Create();
         }
 
-        [TestMethod]
-        public void AddFolderForMonitoring_CalledTwice_CreatesOneFileWatcher()
+        [Fact]
+        public void AddFolderForMonitoring_InitializesFileWatcher()
         {
             // Arrange
             const string path = "path to folder";
 
-            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-            f.Create() == Mock.Of<IFileWatcherWrapper>());
+            var fileWatcherMock = Substitute.For<IFileWatcherWrapper>();
 
-            var fileMonitor = new FileMonitorBuilder()
-                .With(factory)
-                .Build();
+            var factory = Substitute.For<IFileWatcherWrapperFactory>();
+            factory.Create().Returns(fileWatcherMock);
 
-            // Act
-            fileMonitor.AddFolderForMonitoring(path);
-            fileMonitor.AddFolderForMonitoring(path);
-
-            // Assert
-            Mock.Get(factory)
-                .Verify(x => x.Create(), Times.Once);
-        }
-
-        [TestMethod]
-        public void AddFolderForMonitoring_InitializesFileWatcher()
-        {
-            const string path = "path to folder";
-
-            var fileWatcher = Mock.Of<IFileWatcherWrapper>();
-
-            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-               f.Create() == fileWatcher);
-
-            var fileMonitor = new FileMonitorBuilder()
-                .With(factory)
-                .Build();
+            var sut = new FileMonitorBuilder()
+            .With(factory)
+            .Build();
 
             // Act
-            fileMonitor.AddFolderForMonitoring(path);
+            sut.AddFolderForMonitoring(path);
 
             // Assert   (good practices tell to test only one thing so this could be split in a series of tests)
-            var fileWatcherMock = Mock.Get(fileWatcher);
-            fileWatcherMock
-                .VerifySet(x => x.IncludeSubdirectories = false);
-            fileWatcherMock
-                .VerifySet(x => x.EnableRaisingEvents = true);
-            fileWatcherMock
-                .VerifySet(x => x.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-                | NotifyFilters.FileName);
-
-            //fileWatcherMock.VerifyAdd(m => m.Changed += It.IsAny<FileSystemEventHandler>(), Times.Once);     // Does not work?!
+            fileWatcherMock.Received(1).IncludeSubdirectories = false;
+            fileWatcherMock.Received(1).EnableRaisingEvents = true;
+            fileWatcherMock.Received(1).NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName;
         }
 
-        [TestMethod]
+        [Fact]
         public void AddFolderForMonitoring_FolderPath_FileWatcherIsKeptInMemory()
         {
             // Arrange
@@ -144,13 +130,15 @@ namespace BusinessLogicTests
             wrappers.Should().ContainKey(path);
         }
 
-        [TestMethod]
+        [Fact]
         public void RemoveFolderForMonitoring_FolderPath_PathIsForgot()
         {
             // Arrange
-            string path = "path";
+            const string path = "path to folder";
 
-            var fileMonitor = new FileMonitorBuilder().Build();
+            var fileMonitor = new FileMonitorBuilder()
+                .Build();
+
             fileMonitor.AddFolderForMonitoring(path);
 
             // Act
@@ -161,14 +149,16 @@ namespace BusinessLogicTests
             knownFolders.Should().NotContain(path);
         }
 
-        [TestMethod]
+        [Fact]
         public void RemoveFolderForMonitoring_TwoFolderPathsRemoveOne_LeaveTheOther()
         {
             // Arrange
-            string pathToKeep = "pathToKeep";
-            string pathToRemove = "pathToRemove";
+            const string pathToKeep = "path to folder";
+            const string pathToRemove = "another path to a different folder";
 
-            var fileMonitor = new FileMonitorBuilder().Build();
+            var fileMonitor = new FileMonitorBuilder()
+                .Build();
+
             fileMonitor.AddFolderForMonitoring(pathToKeep);
             fileMonitor.AddFolderForMonitoring(pathToRemove);
 
@@ -177,115 +167,109 @@ namespace BusinessLogicTests
 
             // Assert
             IList<string> knownFolders = fileMonitor.GetMonitoredFolderPath();
-            Assert.IsTrue(knownFolders.Contains(pathToKeep), $"Expected path '{pathToKeep}' to be found.");
+            knownFolders.Should().HaveCount(1);
+            knownFolders.First().Should().BeEquivalentTo(pathToKeep);
         }
 
-        [TestMethod]
+        [Fact]
         public void RemoveFolderForMonitoring_FolderPath_DisposesFileWatcher()
         {
             // Arrange
             string path = "path";
 
-            var wrapper = Mock.Of<IFileWatcherWrapper>();
+            IFileWatcherWrapper wrapper = Substitute.For<IFileWatcherWrapper>();
+            IFileWatcherWrapperFactory wrapperFactory = Substitute.For<IFileWatcherWrapperFactory>();
+            wrapperFactory.Create().Returns(wrapper);
 
-            var wrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
-                f => f.Create() == wrapper);
-
-            var fileMonitor = new FileMonitorBuilder()
+            var sut = new FileMonitorBuilder()
                 .With(wrapperFactory)
                 .Build();
 
-            fileMonitor.AddFolderForMonitoring(path);
+            sut.AddFolderForMonitoring(path);
 
             // Act
-            fileMonitor.RemoveFolderForMonitoring(path);
+            sut.RemoveFolderForMonitoring(path);
 
             // Assert
-            Mock.Get(wrapper).Verify(m => m.Dispose(), Times.Once);
+            wrapper.Received(1).Dispose();
         }
 
-        [TestMethod]
+        [Fact]
         public void RemoveFolderForMonitoring_FolderPath_FileWatcherIsForgot()
         {
             // Arrange
             string path = "path";
 
-            var wrapper = Mock.Of<IFileWatcherWrapper>();
+            IFileWatcherWrapper wrapper = Substitute.For<IFileWatcherWrapper>();
+            IFileWatcherWrapperFactory factory = Substitute.For<IFileWatcherWrapperFactory>();
+            factory.Create().Returns(wrapper);
 
-            var wrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
-                f => f.Create() == wrapper);
-
-            var fileMonitor = new FileMonitorBuilder()
-                .With(wrapperFactory)
+            var sut = new FileMonitorBuilder()
+                .With(factory)
                 .Build();
 
-            fileMonitor.AddFolderForMonitoring(path);
+            sut.AddFolderForMonitoring(path);
 
             // Act
-            fileMonitor.RemoveFolderForMonitoring(path);
+            sut.RemoveFolderForMonitoring(path);
 
             // Assert
-            var wrappers = fileMonitor.m_fileWatcherWrappers;
-
-            wrappers.Should().BeEmpty();
+            sut.m_fileWatcherWrappers.Should().BeEmpty();
         }
 
-        [TestMethod]
+        [Fact]
         public void PersistFolders_KnownFolder_FoldersArePersisted()
         {
             // Arrange
             string path1 = "path1";
             string path2 = "path2";
 
-            var storage = Mock.Of<IStorage>();
+            var storage = Substitute.For<IStorage>();
 
-            var fileMonitor = new FileMonitorBuilder()
+            var sut = new FileMonitorBuilder()
                 .With(storage)
                 .Build();
 
-            fileMonitor.AddFolderForMonitoring(path1);
-            fileMonitor.AddFolderForMonitoring(path2);
+            sut.AddFolderForMonitoring(path1);
+            sut.AddFolderForMonitoring(path2);
 
             // Act
-            fileMonitor.PersistFoldersList();
+            sut.PersistFoldersList();
 
             // Assert
-            Mock.Get(storage)
-                .Verify(x => x.Save(It.IsAny<List<string>>(), It.IsAny<string>()));
+            storage.Received(1).Save(Arg.Any<List<string>>(), Arg.Any<string>());
         }
 
-        [TestMethod]
+        [Fact]
         public void OnFileWatcherChanged_NewFile_EnqueuesFileDescriptor()
         {
+            // Arrange
             const string path = "path to folder";
             const string createdFileName = "filename";
 
-            var fileWatcher = Mock.Of<IFileWatcherWrapper>();
+            var fileWatcher = Substitute.For<IFileWatcherWrapper>();
 
-            var factory = Mock.Of<IFileWatcherWrapperFactory>(f =>
-               f.Create() == fileWatcher);
+            var factory = Substitute.For<IFileWatcherWrapperFactory>();
+            factory.Create().Returns(fileWatcher);
 
-            var descriptorUpdater = Mock.Of<IFileDescriptorUpdater>();
+            var descriptorUpdater = Substitute.For<IFileDescriptorUpdater>();
 
             var fileMonitor = new FileMonitorBuilder()
-                .With(factory)
-                .With(descriptorUpdater)
-                .Build();
+            .With(factory)
+            .With(descriptorUpdater)
+            .Build();
 
             fileMonitor.AddFolderForMonitoring(path);
 
             // Act
-            Mock.Get(fileWatcher).Raise(x => x.Changed += null,
-                new FileSystemEventArgs(
-                    changeType: WatcherChangeTypes.Created,
-                    directory: path,
-                    name: createdFileName));
+            fileWatcher.Changed += Raise.Event<FileSystemEventHandler>(new object(), new FileSystemEventArgs(
+                changeType: WatcherChangeTypes.Created,
+                directory: path,
+                name: createdFileName));
 
             // Assert
-            Mock.Get(descriptorUpdater).
-                Verify(x => x.Enqueue(It.Is<FileDescriptor>(c => c.FullPath ==
-                Path.Combine(path, createdFileName))),
-                Times.Once);
+            descriptorUpdater.Received(1).Enqueue(Arg.Is<FileDescriptor>(c => c.FullPath ==
+                Path.Combine(path, createdFileName)));
         }
     }
 
@@ -297,11 +281,22 @@ namespace BusinessLogicTests
 
         public FileMonitorBuilder()
         {
-            m_storage = Mock.Of<IStorage>();
-            m_descriptorUpdater = Mock.Of<IFileDescriptorUpdater>();
+            m_storage = Substitute.For<IStorage>();
+            m_descriptorUpdater = Substitute.For<IFileDescriptorUpdater>();
 
-            m_fileWatcherWrapperFactory = Mock.Of<IFileWatcherWrapperFactory>(
-                f => f.Create() == Mock.Of<IFileWatcherWrapper>());
+            m_fileWatcherWrapperFactory = Substitute.For<IFileWatcherWrapperFactory>();
+            m_fileWatcherWrapperFactory.Create().Returns(Substitute.For<IFileWatcherWrapper>());
+        }
+
+        public FileChangeMonitor Build()
+        {
+            return new FileChangeMonitor(m_storage, m_fileWatcherWrapperFactory, m_descriptorUpdater);
+        }
+
+        public FileMonitorBuilder With(IFileWatcherWrapperFactory wrapperFactory)
+        {
+            m_fileWatcherWrapperFactory = wrapperFactory;
+            return this;
         }
 
         public FileMonitorBuilder With(IStorage storage)
@@ -310,21 +305,10 @@ namespace BusinessLogicTests
             return this;
         }
 
-        public FileMonitorBuilder With(IFileWatcherWrapperFactory factory)
-        {
-            m_fileWatcherWrapperFactory = factory;
-            return this;
-        }
-
         public FileMonitorBuilder With(IFileDescriptorUpdater descriptorUpdater)
         {
             m_descriptorUpdater = descriptorUpdater;
             return this;
-        }
-
-        public FileChangeMonitor Build()
-        {
-            return new FileChangeMonitor(m_storage, m_fileWatcherWrapperFactory, m_descriptorUpdater);
         }
     }
 }

@@ -2,25 +2,22 @@
 using BusinessLogic.FileMonitor;
 using BusinessLogic.FileMonitor.FileDescriptor;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
-using Moq;
-using System.Linq;
-using System.Collections.Generic;
 using BusinessLogic.FrameworkAbstractions;
+using Xunit;
+using NSubstitute;
 
 namespace BusinessLogicTests
 {
-    [TestClass]
     public class PlainTextFileDescriptorIndexerTests
     {
-        [TestMethod]
+        [Fact]
         public void Insert_FileDescriptor_Inserted()
         {
             // Arrange
             var sut = new IndexerBuilder().Build();
 
-            var fd = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
+            FileDescriptor fd = new(ChangeInfoType.Created, "fullpath", "name");
 
             // Act
             sut.Insert(fd);
@@ -29,37 +26,38 @@ namespace BusinessLogicTests
             sut.Exists(fd).Should().BeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void RetrieveAll_TwoFileDescriptors_Retrieved()
         {
             // Arrange
             var sut = new IndexerBuilder().Build();
 
-            var fd1 = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
+            FileDescriptor fd1 = new(ChangeInfoType.Created, "fullpath1", "name1");
             sut.Insert(fd1);
 
-            var fd2 = new FileDescriptor(ChangeInfoType.Created, "anotherPath", "anotherName");
+            FileDescriptor fd2 = new(ChangeInfoType.Changed, "fullpath2", "name2");
             sut.Insert(fd2);
 
             // Act
-            var allDescriptors = sut.RetrieveAll();
+            var result = sut.RetrieveAll().ToList();
 
             // Assert
-            sut.Exists(fd1).Should().BeTrue();
-            sut.Exists(fd2).Should().BeTrue();
+            result.Count.Should().Be(2);
+            result[0].Should().Be(fd1);
+            result[1].Should().Be(fd2);
         }
 
-        [TestMethod]
+        [Fact]
         public void Insert_FileDescriptorExists_IsUpdated()
         {
             // Arrange
             var sut = new IndexerBuilder().Build();
 
-            var fd = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
+            FileDescriptor fd = new(ChangeInfoType.Created, "path", "name");
+
             sut.Insert(fd);
 
             fd = sut.RetrieveAll().First();
-            int originalAge = fd.Age;
 
             fd.Age++;
             int expectedAge = fd.Age;
@@ -72,13 +70,13 @@ namespace BusinessLogicTests
             sut.RetrieveAll().First().Age.Should().Be(expectedAge);
         }
 
-        [TestMethod]
+        [Fact]
         public void Remove_FileDescriptor_Removed()
         {
             // Arrange
             var sut = new IndexerBuilder().Build();
 
-            var fd = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
+            var fd = new FileDescriptor(ChangeInfoType.Created, "path", "name");
             sut.Insert(fd);
 
             // Act
@@ -88,76 +86,70 @@ namespace BusinessLogicTests
             sut.Exists(fd).Should().BeFalse();
         }
 
-        [TestMethod]
+        [Fact]
         public void Persist_WhenCalled_SerializesAndSavesDescriptors()
         {
             // Arrange
-            const string serializationResult = "json string";
-
-            var serializer = GetSerializerMock();
-            serializer.Setup(x => x.Serialize(It.IsAny<Dictionary<string, FileDescriptor>>()))
-                .Returns(serializationResult);
-
-            var storage = new Mock<IStorage>();
+            var storage = Substitute.For<IStorage>();
+            var serializer = Substitute.For<ISerializer<Dictionary<string, FileDescriptor>>>();
 
             var sut = new IndexerBuilder()
-                .With(serializer.Object)
-                .With(storage.Object)
+                .WithStorage(storage)
+                .WithSerializer(serializer)
                 .Build();
-
-            var fd = new FileDescriptor(ChangeInfoType.Created, "apath", "name");
-            sut.Insert(fd);
 
             // Act
             sut.Persist();
 
             // Assert
-            serializer.Verify(x => x.Serialize(It.IsAny<Dictionary<string, FileDescriptor>>()), Times.Once);
-            storage.Verify(x => x.Save(serializationResult, It.IsAny<string>()), Times.Once);
+            storage.Received(1).Save(Arg.Any<string>(), Arg.Any<string>());
+            serializer.Received(1).Serialize(Arg.Any<Dictionary<string, FileDescriptor>>());
         }
 
-        [TestMethod]
+        [Fact]
         public void Initialize_SerializationFileDoesntExist_DoNotDeserializeIt()
         {
             // Arrange
             var fileDoesntExistSystemIOFileWrapper = GetFileDoesntExistSystemIOFileWrapper();
 
-            var mockSerializer = Mock.Of<ISerializer<Dictionary<string, FileDescriptor>>>();
+            var mockSerializer = Substitute.For<ISerializer<Dictionary<string, FileDescriptor>>>();
 
             var sut = new IndexerBuilder()
-               .With(fileDoesntExistSystemIOFileWrapper)
-               .With(mockSerializer)
+               .WithSystemIOFileWrapper(fileDoesntExistSystemIOFileWrapper)
+               .WithSerializer(mockSerializer)
                .Build();
 
             // Act
             sut.Initialize();
 
             // Assert
-            Mock.Get(mockSerializer)
-                .Verify(x => x.Deserialize(It.IsAny<string>()), Times.Never);
+            mockSerializer.Received(0).Deserialize(Arg.Any<string>());
         }
 
-        [TestMethod]
+        [Fact]
         public void Initialize_WhenCalled_DeserializesIndex()
         {
             // Arrange
-            var serializer = GetSerializerMock();
-
             var fileExistsSystemIOFileWrapper = GetFileExistsSystemIOFileWrapper();
+            
+            const string deserializedIndex = "test";
+            fileExistsSystemIOFileWrapper.ReadAllText(Arg.Any<string>()).Returns(deserializedIndex);
+
+            var serializer = Substitute.For<ISerializer<Dictionary<string, FileDescriptor>>>();
 
             var sut = new IndexerBuilder()
-                .With(serializer.Object)
-                .With(fileExistsSystemIOFileWrapper)
+                .WithSystemIOFileWrapper(fileExistsSystemIOFileWrapper)
+                .WithSerializer(serializer)
                 .Build();
 
             // Act
             sut.Initialize();
 
             // Assert
-            serializer.Verify(x => x.Deserialize(It.IsAny<string>()));
+            serializer.Received(1).Deserialize(deserializedIndex);
         }
 
-        [TestMethod]
+        [Fact]
         public void Initialize_WhenCalled_RestoresIndex()
         {
             // Arrange
@@ -167,78 +159,75 @@ namespace BusinessLogicTests
                 ["a key"] = descriptor
             };
 
-            var serializer = GetSerializerMock();
-            serializer.Setup(x => x.Deserialize(It.IsAny<string>()))
-                .Returns(index);
+            var serializer = Substitute.For<ISerializer<Dictionary<string, FileDescriptor>>>();
+            serializer.Deserialize(Arg.Any<string>()).Returns(index);
 
             var fileExistsSystemIOFileWrapper = GetFileExistsSystemIOFileWrapper();
 
             var sut = new IndexerBuilder()
-                .With(serializer.Object)
-                .With(fileExistsSystemIOFileWrapper)
+                .WithSerializer(serializer)
+                .WithSystemIOFileWrapper(fileExistsSystemIOFileWrapper)
                 .Build();
 
+            // Act
             sut.Initialize();
 
-            // Act
-            var descriptors = sut.RetrieveAll();
-
             // Assert
-            Assert.AreEqual(descriptors.FirstOrDefault(), descriptor);
-        }
-
-        private static Mock<ISerializer<Dictionary<string, FileDescriptor>>> GetSerializerMock()
-        {
-            return new Mock<ISerializer<Dictionary<string, FileDescriptor>>>();
-        }
-
-        private static ISystemIOFileWrapper GetFileExistsSystemIOFileWrapper()
-        {
-            return Mock.Of<ISystemIOFileWrapper>(x =>
-                            x.Exists(It.IsAny<string>()) == true);
+            var descriptors = sut.RetrieveAll();
+            descriptors.First().Should().BeSameAs(descriptor);
         }
 
         private static ISystemIOFileWrapper GetFileDoesntExistSystemIOFileWrapper()
         {
-            return Mock.Of<ISystemIOFileWrapper>(x =>
-                            x.Exists(It.IsAny<string>()) == false);
+            var mock = Substitute.For<ISystemIOFileWrapper>();
+            mock.Exists(Arg.Any<string>()).Returns(false);
+            
+            return mock;
+        }
+
+        private static ISystemIOFileWrapper GetFileExistsSystemIOFileWrapper()
+        {
+            var mock = Substitute.For<ISystemIOFileWrapper>();
+            mock.Exists(Arg.Any<string>()).Returns(true);
+
+            return mock;
         }
     }
 
     internal class IndexerBuilder
     {
-        private IStorage m_storage;
-        private ISerializer<Dictionary<string, FileDescriptor>> m_serializer;
-        private ISystemIOFileWrapper m_systemIOFile;
+        private ISerializer<Dictionary<string, FileDescriptor>> _serializer;
+        private IStorage _storage;
+        private ISystemIOFileWrapper _systemIo;
 
         public IndexerBuilder()
         {
-            m_storage = Mock.Of<IStorage>();
-            m_serializer = Mock.Of<ISerializer<Dictionary<string, FileDescriptor>>>();
-            m_systemIOFile = Mock.Of<ISystemIOFileWrapper>();
+            _serializer = Substitute.For<ISerializer<Dictionary<string, FileDescriptor>>>();
+            _storage = Substitute.For<IStorage>();
+            _systemIo = Substitute.For<ISystemIOFileWrapper>();
         }
 
-        public IndexerBuilder With(ISerializer<Dictionary<string, FileDescriptor>> serializer)
+        public IndexerBuilder WithSystemIOFileWrapper(ISystemIOFileWrapper wrapper)
         {
-            m_serializer = serializer;
+            _systemIo = wrapper;
             return this;
         }
 
-        public IndexerBuilder With(ISystemIOFileWrapper systemIOFile)
+        public IndexerBuilder WithStorage(IStorage storage)
         {
-            m_systemIOFile = systemIOFile;
+            _storage = storage;
             return this;
         }
 
-        public IndexerBuilder With(IStorage storage)
+        public IndexerBuilder WithSerializer(ISerializer<Dictionary<string, FileDescriptor>> serializer)
         {
-            m_storage = storage;
+            _serializer = serializer;
             return this;
         }
 
         public PlainTextFileDescriptorIndexer Build()
         {
-            return new PlainTextFileDescriptorIndexer(m_serializer, m_storage, m_systemIOFile);
+            return new PlainTextFileDescriptorIndexer(_serializer, _storage, _systemIo);
         }
     }
 }

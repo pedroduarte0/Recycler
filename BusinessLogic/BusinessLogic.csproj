@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<InternalsVisibleTo Include="BusinessLogicTests"/>
     <Compile Update="FrameworkAbstractions\FileWatcherWrapper.cs">
       <SubType>Component</SubType>
     </Compile>

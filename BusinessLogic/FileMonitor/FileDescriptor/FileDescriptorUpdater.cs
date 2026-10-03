@@ -1,9 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Collections.Concurrent;
 using BusinessLogic.FrameworkAbstractions;
 using BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer;
-using System.Linq;
 
 namespace BusinessLogic.FileMonitor.FileDescriptor
 {

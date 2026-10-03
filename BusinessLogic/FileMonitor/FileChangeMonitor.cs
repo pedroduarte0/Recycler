@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics;
 using BusinessLogic.FileMonitor.FileDescriptor;
-using System.Collections.Generic;
 using BusinessLogic.FrameworkAbstractions;
-using System.IO;
-using System;
 
 namespace BusinessLogic.FileMonitor
 {
@@ -126,8 +123,9 @@ namespace BusinessLogic.FileMonitor
 
         internal IList<string> GetMonitoredFolderPath()
         {
-            // TODO: return a copy.
-            return m_monitoredFolders;
+            return m_monitoredFolders
+                .Select(x => new string(x))
+                .ToList();
         }
     }
 }

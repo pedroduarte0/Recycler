@@ -53,7 +53,7 @@ namespace BusinessLogic.FileMonitor.FileDescriptor.FileDescriptorIndexer
 
         public void Persist()
         {
-            // Does nothing. Persistung isn't  needed for this implementation.
+            // Does nothing. Persisting isn't  needed for this implementation.
         }
 
         public void Remove(FileDescriptor descriptor)
